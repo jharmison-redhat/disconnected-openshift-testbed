@@ -1,0 +1,4 @@
+tags
+tags.lock
+*.swp
+variables.tf.old
