@@ -2,7 +2,6 @@
 
 sudo dnf -y update
 sudo dnf -y install python36 squid
-sudo dnf -y module install container-tools
 
 systemctl enable --now squid
 sleep 5
