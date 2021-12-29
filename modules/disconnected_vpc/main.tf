@@ -76,9 +76,9 @@ resource "aws_default_route_table" "public" {
 # The proxy instance lives in the NAT subnet
 resource "aws_instance" "proxy" {
   ami                         = var.proxy_ami
-  availability_zone			    	= var.availability_zones[0]
-  ebs_optimized						    =	true
-  instance_type   				    = var.proxy_flavor
+  availability_zone           = var.availability_zones[0]
+  ebs_optimized               = true
+  instance_type               = var.proxy_flavor
   monitoring                  = false
   key_name                    = var.proxy_ssh_key
   subnet_id                   = aws_subnet.nat.id
@@ -100,10 +100,10 @@ resource "aws_instance" "proxy" {
 
 # And the private subnets should route through the proxy
 resource "aws_route_table" "private" {
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id = aws_vpc.vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block  = "0.0.0.0/0"
     instance_id = aws_instance.proxy.id
   }
 

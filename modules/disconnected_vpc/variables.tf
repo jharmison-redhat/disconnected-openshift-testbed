@@ -20,8 +20,8 @@ variable "proxy_ami" {
 }
 
 variable "proxy_flavor" {
-	type				= string
-	description = "The instance type to use for the proxy instance."
+  type        = string
+  description = "The instance type to use for the proxy instance."
 }
 
 variable "proxy_ssh_key" {
