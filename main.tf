@@ -39,3 +39,8 @@ module "vpc" {
   proxy_flavor        = var.small_flavor
   proxy_ssh_key       = aws_key_pair.ec2_key.key_name
 }
+
+module "registry" {
+  source              = "./modules/quay_registry"
+  # need to add vars
+}
