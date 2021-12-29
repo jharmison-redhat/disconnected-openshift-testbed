@@ -38,3 +38,4 @@ terraform.rc
 tags
 tags.lock
 *.swp
+*.log
