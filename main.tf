@@ -27,6 +27,10 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+data "aws_route53_zone" "public" {
+  name = var.cluster_domain
+}
+
 resource "aws_key_pair" "ec2_key" {
   key_name   = "${var.cluster_name}_${replace(var.cluster_domain, ".", "_")}"
   public_key = var.public_key
@@ -38,10 +42,6 @@ module "vpc" {
   proxy_ami          = data.aws_ami.rhel.id
   proxy_flavor       = var.small_flavor
   proxy_ssh_key      = aws_key_pair.ec2_key.key_name
-}
-
-data "aws_route53_zone" "public" {
-  name = var.cluster_domain
 }
 
 module "registry" {
