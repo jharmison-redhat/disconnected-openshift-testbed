@@ -40,7 +40,7 @@ jobs:
       name: Setup golang
 
     - name: Install tfsec
-      run: go install github.com/aquasecurity/tfsec/cmd/tfsec@latest
+      run: go install github.com/aquasecurity/tfsec/cmd/tfsec
 
     - name: Run tfsec
       run: tfsec .
