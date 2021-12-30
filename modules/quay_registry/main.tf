@@ -18,7 +18,9 @@ resource "aws_instance" "registry" {
   subnet_id                   = var.subnet_id
   associate_public_ip_address = true #tfsec:ignore:AWS012
   tags = {
-    Name = "${var.domain}-registry"
+    # This is.... deeply frustrating.
+    # https://github.com/hashicorp/terraform-provider-aws/issues/19583
+    Name = "registry"
     Role = "registry"
   }
 
