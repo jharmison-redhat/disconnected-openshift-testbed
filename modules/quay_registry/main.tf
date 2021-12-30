@@ -2,8 +2,8 @@ terraform {
   required_version = ">= 0.14.0"
   required_providers {
     aws = {
-      source    = "hashicorp/aws"
-      version   = "3.70.0"
+      source  = "hashicorp/aws"
+      version = "3.70.0"
     }
   }
 }
@@ -28,5 +28,5 @@ resource "aws_instance" "registry" {
     delete_on_termination = true
   }
 
-  user_data = "${file("quay.sh")}"
+  user_data = file("quay.sh")
 }

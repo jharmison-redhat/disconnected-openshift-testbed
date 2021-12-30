@@ -2,25 +2,25 @@ terraform {
   required_version = ">= 0.14.0"
   required_providers {
     aws = {
-      source    = "hashicorp/aws"
-      version   = "3.70.0"
+      source  = "hashicorp/aws"
+      version = "3.70.0"
     }
   }
 }
 
 resource "aws_vpc" "vpc" {
-  cidr_block            = var.vpc_cidr
-  enable_dns_hostnames  = true
-  enable_dns_support    = true
-  instance_tenancy      = "default"
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+  instance_tenancy     = "default"
 }
 
 # Creates private subnets for each az
 resource "aws_subnet" "private" {
-  count                   = "${length(var.availability_zones)}"
+  count                   = length(var.availability_zones)
   availability_zone       = var.availability_zones[count.index]
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "${cidrsubnet(var.vpc_cidr, 4, count.index)}"
+  cidr_block              = cidrsubnet(var.vpc_cidr, 4, count.index)
   map_public_ip_on_launch = false
   tags = {
     Role = "private"
@@ -29,10 +29,10 @@ resource "aws_subnet" "private" {
 
 # Creates public subnets for each az
 resource "aws_subnet" "public" {
-  count                   = "${length(var.availability_zones)}"
+  count                   = length(var.availability_zones)
   availability_zone       = var.availability_zones[count.index]
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "${cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) + count.index)}"
+  cidr_block              = cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) + count.index)
   map_public_ip_on_launch = true
   tags = {
     Role = "public"
@@ -43,7 +43,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "nat" {
   availability_zone       = var.availability_zones[0]
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "${cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) * 2)}"
+  cidr_block              = cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) * 2)
   map_public_ip_on_launch = true
   tags = {
     Role = "nat"
@@ -86,12 +86,12 @@ resource "aws_instance" "proxy" {
   source_dest_check           = false
 
   root_block_device {
-    volume_type               = "gp2"
-    volume_size               = 20
-    delete_on_termination     = true
+    volume_type           = "gp2"
+    volume_size           = 20
+    delete_on_termination = true
   }
 
-  user_data = "${file("${path.module}/squid.sh")}"
+  user_data = file("${path.module}/squid.sh")
 
   tags = {
     Role = "proxy"
@@ -113,7 +113,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  count           = "${length(aws_subnet.private)}"
-  subnet_id       = aws_subnet.private[count.index].id
-  route_table_id  = aws_route_table.private.id
+  count          = length(aws_subnet.private)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private.id
 }

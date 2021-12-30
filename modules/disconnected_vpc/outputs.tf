@@ -1,5 +1,5 @@
 output "private_subnets" {
-  value     = [aws_subnet.private.*.id]
+  value       = [aws_subnet.private.*.id]
   description = "The IDs of the subnets that route through the proxy."
 }
 output "public_subnets" {
