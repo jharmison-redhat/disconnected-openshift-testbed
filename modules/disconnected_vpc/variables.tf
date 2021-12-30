@@ -22,6 +22,7 @@ variable "proxy_ami" {
 variable "proxy_flavor" {
   type        = string
   description = "The instance type to use for the proxy instance."
+  default     = "t3.small"
 }
 
 variable "proxy_ssh_key" {
