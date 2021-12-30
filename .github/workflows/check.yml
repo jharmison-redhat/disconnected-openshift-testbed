@@ -14,40 +14,28 @@ jobs:
     - uses: actions/checkout@v2
       name: Checkout code
 
-    - uses: actions/cache@v2
-      name: Cache tflint plugins
-      with:
-        path: ./.tflint.d/plugins
-        key: tflint-${{ hashFiles('.tflint.hcl') }}
-
-    - uses: terraform-linters/setup-tflint@v1
-      name: Setup tflint
-
     - uses: hashicorp/setup-terraform@v1
       name: Setup Terraform
 
     - name: Init terraform
       run: terraform init
 
-    - name: Init tflint
-      run: tflint --init
-
-    - name: Run tflint
-      run: tflint -f compact
+    - uses: reviewdog/action-tflint@master
+      name: Run tflint
+      with:
+        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
 
   tfsec:
     runs-on: ubuntu-latest
-    container: aquasec/tfsec-ci:latest
     steps:
-
-    - name: Install git
-      run: apk add git
 
     - uses: actions/checkout@v2
       name: Checkout code
 
-    - name: Run tfsec
-      run: tfsec .
+    - uses: reviewdog/action-tfsec@master
+      name: Run tfsec
+      with:
+        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
 
   fmt:
     runs-on: ubuntu-latest
