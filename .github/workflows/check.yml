@@ -1,0 +1,59 @@
+---
+name: Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      name: Checkout code
+
+    - uses: actions/cache@v2
+      name: Cache tflint plugins
+      with:
+        path: ./.tflint.d/plugins
+        key: tflint-${{ hashFiles('.tflint.hcl') }}
+
+    - uses: terraform-linters/setup-tflint@v1
+      name: Setup tflint
+
+    - name: Init tflint
+      run: tflint --init
+
+    - name: Run tflint
+      run: tflint -f compact
+
+  tfsec:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      name: Checkout code
+
+    - uses: actions/setup-go@v2
+      name: Setup golang
+
+    - name: Install tfsec
+      run: go install github.com/aquasecurity/tfsec/cmd/tfsec@latest
+
+    - name: Run tfsec
+      run: tfsec .
+
+  fmt:
+    runs-con: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      name: Checkout code
+
+    - uses: hashicorp/setup-terraform@v1
+      name: Setup Terraform
+
+    - name: Check format
+      run: terraform fmt -check
