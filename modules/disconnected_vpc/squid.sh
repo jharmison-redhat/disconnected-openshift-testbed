@@ -13,7 +13,7 @@ cp -a /etc/squid /etc/squid_orig
 
 # Create a SSL certificate for the SslBump Squid module
 mkdir /etc/squid/ssl
-pushd /etc/squid/ssl
+pushd /etc/squid/ssl || exit 1
 openssl genrsa -out squid.key 4096
 openssl req -new -key squid.key -out squid.csr -subj "/C=US/ST=VA/L=squid/O=squid/CN=squid"
 openssl x509 -req -days 3650 -in squid.csr -signkey squid.key -out squid.crt
