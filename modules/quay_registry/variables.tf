@@ -29,6 +29,12 @@ variable "ssh_key_name" {
   description = "The SSH public key to use for the proxy instance - must already exist as an aws_key_pair!"
 }
 
+variable "instance_password" {
+  type        = string
+  description = "The password to set for the ec2-user on the registry instance."
+  sensitive   = true
+}
+
 variable "domain" {
   type        = string
   description = "The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the registry."

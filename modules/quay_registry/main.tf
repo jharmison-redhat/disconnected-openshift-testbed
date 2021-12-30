@@ -44,7 +44,11 @@ resource "aws_instance" "registry" {
     ]
   }
 
-  user_data = file("${path.module}/quay.sh")
+  user_data = templatefile(
+    "${path.module}/quay.sh.tpl", {
+      ec2_user_password = var.instance_password
+    }
+  )
 }
 
 resource "aws_eip" "registry" {
@@ -58,6 +62,6 @@ resource "aws_route53_record" "registry" {
   name            = "${var.hostname}.${var.domain}"
   type            = "A"
   ttl             = "300"
-  records         = [aws_instance.registry.public_ip]
+  records         = [aws_eip.registry.public_ip]
   allow_overwrite = true
 }

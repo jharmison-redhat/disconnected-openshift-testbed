@@ -33,7 +33,7 @@ resource "aws_subnet" "public" {
   availability_zone       = var.availability_zones[count.index]
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) + count.index)
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = {
     Role = "public"
   }
@@ -44,7 +44,7 @@ resource "aws_subnet" "nat" {
   availability_zone       = var.availability_zones[0]
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) * 2)
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = {
     Role = "nat"
   }
@@ -105,7 +105,11 @@ resource "aws_instance" "proxy" {
     ]
   }
 
-  user_data = file("${path.module}/squid.sh")
+  user_data = templatefile(
+    "${path.module}/squid.sh.tpl", {
+      ec2_user_password = var.proxy_instance_password
+    }
+  )
 
   tags = {
     Role = "proxy"

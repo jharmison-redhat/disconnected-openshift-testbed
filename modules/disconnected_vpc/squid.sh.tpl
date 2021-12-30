@@ -64,4 +64,6 @@ EOF
 
 /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
 
+echo '${ec2_user_password}' | sudo passwd ec2-user
+
 sudo reboot now
