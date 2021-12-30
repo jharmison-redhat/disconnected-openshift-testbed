@@ -92,7 +92,9 @@ resource "aws_instance" "proxy" {
   }
 
   metadata_options {
-    http_tokens = "required"
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
   }
 
   user_data = file("${path.module}/squid.sh")

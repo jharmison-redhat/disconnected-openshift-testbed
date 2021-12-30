@@ -31,7 +31,9 @@ resource "aws_instance" "registry" {
   }
 
   metadata_options {
-    http_tokens = "required"
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
   }
 
   user_data = file("${path.module}/quay.sh")
