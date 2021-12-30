@@ -23,6 +23,7 @@ jobs:
       name: Run tflint
       with:
         github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+        tflint_rulesets: aws
         fail_on_error: true
       env:
         TFLINT_PLUGIN_DIR: ./tflint.d/plugins
