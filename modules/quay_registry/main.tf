@@ -40,6 +40,6 @@ resource "aws_route53_record" "registry" {
   name            = "${var.hostname}.${var.domain}"
   type            = "A"
   ttl             = "300"
-  records         = aws_instance.registry.public_ip
+  records         = [aws_instance.registry.public_ip]
   allow_overwrite = true
 }
