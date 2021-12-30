@@ -97,6 +97,15 @@ resource "aws_instance" "proxy" {
     http_put_response_hop_limit = 1
   }
 
+  lifecycle {
+    ignore_changes = [
+      # AWS updates these dynamically, do not interfere.
+      tags["ServiceOwner"],
+      tags_all["ServiceOwner"],
+      root_block_device["tags"]
+    ]
+  }
+
   user_data = file("${path.module}/squid.sh")
 
   tags = {
