@@ -9,14 +9,13 @@ terraform {
 }
 
 resource "aws_instance" "registry" {
-  ami                         = var.ami_id
-  availability_zone           = var.availability_zone
-  ebs_optimized               = true
-  instance_type               = var.flavor
-  monitoring                  = false
-  key_name                    = var.ssh_key_name
-  subnet_id                   = var.subnet_id
-  associate_public_ip_address = true #tfsec:ignore:AWS012
+  ami               = var.ami_id
+  availability_zone = var.availability_zone
+  ebs_optimized     = true
+  instance_type     = var.flavor
+  monitoring        = false
+  key_name          = var.ssh_key_name
+  subnet_id         = var.subnet_id
   tags = {
     # This is.... deeply frustrating.
     # https://github.com/hashicorp/terraform-provider-aws/issues/19583
@@ -46,6 +45,12 @@ resource "aws_instance" "registry" {
   }
 
   user_data = file("${path.module}/quay.sh")
+}
+
+resource "aws_eip" "registry" {
+  vpc               = true
+  instance          = aws_instance.registry.id
+  network_interface = aws_instance.registry.primary_network_interface_id
 }
 
 resource "aws_route53_record" "registry" {

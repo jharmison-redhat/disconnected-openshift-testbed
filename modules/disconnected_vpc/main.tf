@@ -75,15 +75,14 @@ resource "aws_default_route_table" "public" {
 
 # The proxy instance lives in the NAT subnet
 resource "aws_instance" "proxy" {
-  ami                         = var.proxy_ami
-  availability_zone           = var.availability_zones[0]
-  ebs_optimized               = true
-  instance_type               = var.proxy_flavor
-  monitoring                  = false
-  key_name                    = var.proxy_ssh_key
-  subnet_id                   = aws_subnet.nat.id
-  associate_public_ip_address = false
-  source_dest_check           = false
+  ami               = var.proxy_ami
+  availability_zone = var.availability_zones[0]
+  ebs_optimized     = true
+  instance_type     = var.proxy_flavor
+  monitoring        = false
+  key_name          = var.proxy_ssh_key
+  subnet_id         = aws_subnet.nat.id
+  source_dest_check = false
 
   root_block_device {
     volume_type           = "gp2"
