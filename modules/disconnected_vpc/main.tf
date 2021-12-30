@@ -82,7 +82,7 @@ resource "aws_instance" "proxy" {
   monitoring                  = false
   key_name                    = var.proxy_ssh_key
   subnet_id                   = aws_subnet.nat.id
-  associate_public_ip_address = true #tfsec:ignore:AWS012
+  associate_public_ip_address = false
   source_dest_check           = false
 
   root_block_device {
@@ -93,7 +93,7 @@ resource "aws_instance" "proxy" {
 
   metadata_options {
     http_tokens = "required"
-  } 
+  }
 
   user_data = file("${path.module}/squid.sh")
 
