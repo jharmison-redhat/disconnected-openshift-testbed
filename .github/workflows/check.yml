@@ -40,6 +40,9 @@ jobs:
     container: aquasec/tfsec-ci:latest
     steps:
 
+    - name: Install git
+      run: apk add git
+
     - uses: actions/checkout@v2
       name: Checkout code
 
