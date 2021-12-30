@@ -40,7 +40,17 @@ module "vpc" {
   proxy_ssh_key      = aws_key_pair.ec2_key.key_name
 }
 
-# module "registry" {
-#   source              = "./modules/quay_registry"
-#   # need to add vars
-# }
+data "aws_route53_zone" "public" {
+  name = var.cluster_domain
+}
+
+module "registry" {
+  source            = "./modules/quay_registry"
+  ami_id            = data.aws_ami.rhel.id
+  subnet_id         = module.vpc.public_subnets[0]
+  availability_zone = data.aws_availability_zones.available.names[1]
+  flavor            = var.large_flavor
+  ssh_key_name      = aws_key_pair.ec2_key.key_name
+  domain            = "${var.cluster_name}.${var.cluster_domain}"
+  hosted_zone       = data.aws_route53_zone.public.id
+}

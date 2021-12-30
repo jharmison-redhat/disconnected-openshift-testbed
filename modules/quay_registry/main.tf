@@ -16,9 +16,9 @@ resource "aws_instance" "registry" {
   monitoring                  = false
   key_name                    = var.ssh_key_name
   subnet_id                   = var.subnet_id
-  associate_public_ip_address = true
+  associate_public_ip_address = true #tfsec:ignore:AWS012
   tags = {
-    Name = "${var.cluster_domain}-${var.cluster_name}-registry"
+    Name = "${var.domain}-registry"
     Role = "registry"
   }
 
@@ -28,5 +28,18 @@ resource "aws_instance" "registry" {
     delete_on_termination = true
   }
 
-  user_data = file("quay.sh")
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  user_data = file("${path.module}/quay.sh")
+}
+
+resource "aws_route53_record" "registry" {
+  zone_id         = var.hosted_zone
+  name            = "${var.hostname}.${var.domain}"
+  type            = "A"
+  ttl             = "300"
+  records         = aws_instance.registry.public_ip
+  allow_overwrite = true
 }
