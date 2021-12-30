@@ -23,6 +23,12 @@ jobs:
     - uses: terraform-linters/setup-tflint@v1
       name: Setup tflint
 
+    - uses: hashicorp/setup-terraform@v1
+      name: Setup Terraform
+
+    - name: Init terraform
+      run: terraform init
+
     - name: Init tflint
       run: tflint --init
 
