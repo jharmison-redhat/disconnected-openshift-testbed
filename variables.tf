@@ -23,7 +23,7 @@ variable "rhel_version" {
 variable "small_flavor" {
   type        = string
   description = "The AWS flavor to use for smaller instances (proxy, bastion)"
-  default     = "t2.2xsmall"
+  default     = "t3.small"
 }
 
 variable "large_flavor" {
