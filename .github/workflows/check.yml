@@ -19,14 +19,18 @@ jobs:
     - name: Init terraform
       run: terraform init
 
+    - name: Ensure tflint plugins directory exists
+      run: mkdir -p "${GITHUB_WORKSPACE}/tflint.d/plugins"
+
     - uses: reviewdog/action-tflint@master
       name: Run tflint
       with:
         github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
         tflint_rulesets: aws
+        filter_mode: nofilter
         fail_on_error: true
       env:
-        TFLINT_PLUGIN_DIR: ./tflint.d/plugins
+        TFLINT_PLUGIN_DIR: ${{ env.GITHUB_WORKSPACE }}/tflint.d/plugins
 
   tfsec:
     runs-on: ubuntu-latest
@@ -39,6 +43,7 @@ jobs:
       name: Run tfsec
       with:
         github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+        filter_mode: nofilter
         fail_on_error: true
 
   fmt-and-validate:
