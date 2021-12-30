@@ -54,5 +54,8 @@ jobs:
     - name: Check format
       run: terraform fmt -check
 
+    - name: Init terraform
+      run: terraform init
+
     - name: Check valid terraform
       run: terraform validate
