@@ -1,0 +1,61 @@
+---
+name: Check
+
+on:
+  pull_request:
+
+jobs:
+
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      name: Checkout code
+
+    - uses: hashicorp/setup-terraform@v1
+      name: Setup Terraform
+
+    - name: Init terraform
+      run: terraform init
+
+    - uses: solacelost/action-tflint@feat/add-init
+      name: Run tflint
+      with:
+        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+        tflint_init: true
+        filter_mode: nofilter
+        fail_on_error: true
+
+  tfsec:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      name: Checkout code
+
+    - uses: reviewdog/action-tfsec@master
+      name: Run tfsec
+      with:
+        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+        filter_mode: nofilter
+        fail_on_error: true
+
+  fmt-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      name: Checkout code
+
+    - uses: hashicorp/setup-terraform@v1
+      name: Setup Terraform
+
+    - name: Check format
+      run: terraform fmt -check
+
+    - name: Init terraform
+      run: terraform init
+
+    - name: Check valid terraform
+      run: terraform validate
