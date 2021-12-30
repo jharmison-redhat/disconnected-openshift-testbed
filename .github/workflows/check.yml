@@ -37,16 +37,11 @@ jobs:
 
   tfsec:
     runs-on: ubuntu-latest
+    container: aquasec/tfsec-ci:latest
     steps:
 
     - uses: actions/checkout@v2
       name: Checkout code
-
-    - uses: actions/setup-go@v2
-      name: Setup golang
-
-    - name: Install tfsec
-      run: go install github.com/aquasecurity/tfsec
 
     - name: Run tfsec
       run: tfsec .
