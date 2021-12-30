@@ -26,6 +26,6 @@ REQUIREMENTS
 
 ansible-galaxy install -r requirements.yml
 
-echo '${ec2_user_password}' | sudo passwd ec2-user
+echo '${ec2_user_password}' | sudo passwd --stdin ec2-user
 
 sudo reboot now
