@@ -21,7 +21,7 @@ variable "proxy_ami" {
 
 variable "proxy_flavor" {
   type        = string
-  gescription = "The instance type to use for the proxy instance."
+  description = "The instance type to use for the proxy instance."
 }
 
 variable "proxy_ssh_key" {
