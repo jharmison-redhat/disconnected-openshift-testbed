@@ -40,7 +40,7 @@ jobs:
         github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
         fail_on_error: true
 
-  fmt:
+  fmt-and-validate:
     runs-on: ubuntu-latest
     steps:
 
@@ -52,3 +52,6 @@ jobs:
 
     - name: Check format
       run: terraform fmt -check
+
+    - name: Check valid terraform
+      run: terraform validate
