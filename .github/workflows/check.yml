@@ -19,9 +19,6 @@ jobs:
     - name: Init terraform
       run: terraform init
 
-    - name: Ensure tflint plugins directory exists
-      run: mkdir -pv "$GITHUB_WORKSPACE/tflint.d/plugins"
-
     - uses: reviewdog/action-tflint@master
       name: Run tflint
       with:
@@ -29,8 +26,6 @@ jobs:
         tflint_rulesets: aws
         filter_mode: nofilter
         fail_on_error: true
-      env:
-        TFLINT_PLUGIN_DIR: "$GITHUB_WORKSPACE/tflint.d/plugins"
 
   tfsec:
     runs-on: ubuntu-latest
