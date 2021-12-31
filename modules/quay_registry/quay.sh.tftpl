@@ -38,8 +38,13 @@ cat << PLAYBOOK > /home/ec2-user/playbook.yml
       registry_hostname: '${registry_hostname}'
 PLAYBOOK
 
+cat << FIRSTBOOT > /root/firstboot.sh
+#!/bin/bash
 sudo -iu ec2-user /usr/local/bin/ansible-galaxy install -r /home/ec2-user/requirements.yml
 sudo -iu ec2-user /usr/local/bin/ansible-playbook /home/ec2-user/playbook.yml
+FIRSTBOOT
+chmod +x /root/firstboot.sh
+echo '@reboot root /root/firstboot.sh' >> /etc/crontab
 
 %{ if ec2_user_password != "" }
 echo '${ec2_user_password}' | passwd --stdin ec2-user
