@@ -59,3 +59,20 @@ variable "extra_urls" {
   description = "The list of URLs that will be allowed through the squid proxy, exactly as they would be in a squid whitelist (ex: \".amazonaws.com\")."
   default     = []
 }
+
+variable "redhat_username" {
+  type        = string
+  description = "The terms-based-registry username for using Red Hat container images."
+}
+
+variable "redhat_password" {
+  type        = string
+  description = "The terms-based registry password for using Red Hat container images."
+  sensitive   = true
+}
+
+variable "registry_admin" {
+  type        = object({ username = string, password = string, email = string })
+  description = "The username, password, and email to configure for the admin user on the Quay instance."
+  sensitive   = true
+}

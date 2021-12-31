@@ -20,8 +20,16 @@ data "aws_vpc" "disco" {
 #tfsec:ignore:aws-vpc-no-public-egress-sg tfsec:ignore:aws-vpc-no-public-ingress-sg
 resource "aws_security_group" "registry" {
   name        = "${var.hostname}.${var.domain}"
-  description = "Allows inbound access on 443, in addition to SSH and inter-VPC traffic."
+  description = "Allows inbound access for HTTP/S, in addition to SSH and inter-VPC traffic."
   vpc_id      = data.aws_vpc.disco.id
+
+  ingress {
+    description = "Allow incoming HTTP connections."
+    from_port   = "80"
+    to_port     = "80"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     description = "Allow incoming HTTPS connections."
@@ -64,6 +72,86 @@ resource "aws_security_group" "registry" {
   }
 }
 
+# - We're heavily restricting access to this bucket, and encrypting it will
+#   only slow it down and make configuration more complex
+# - Logging is unnecessarily complex for this simple environment
+# - Versioning doesn't matter as blobs used by the registry will be globally
+#   unique anyways, thanks to hashing
+#tfsec:ignore:aws-s3-enable-bucket-encryption tfsec:ignore:aws-s3-enable-bucket-logging tfsec:ignore:aws-s3-enable-versioning
+resource "aws_s3_bucket" "registry" {
+  force_destroy = true
+  bucket        = "${var.domain}-registry"
+  acl           = "private"
+}
+
+resource "aws_s3_bucket_public_access_block" "registry" {
+  bucket = aws_s3_bucket.registry.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_iam_role" "registry" {
+  name = "${var.domain}-registry"
+  path = "/"
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Action" : "sts:AssumeRole",
+        "Principal" : {
+          "Service" : "ec2.amazonaws.com"
+        },
+        "Effect" : "Allow",
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "registry" {
+  name = "${var.domain}-registry"
+  role = aws_iam_role.registry.id
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:ListStorageLensConfigurations",
+          "s3:ListAccessPointsForObjectLambda",
+          "s3:GetAccessPoint",
+          "s3:PutAccountPublicAccessBlock",
+          "s3:GetAccountPublicAccessBlock",
+          "s3:ListAllMyBuckets",
+          "s3:ListAccessPoints",
+          "s3:ListJobs",
+          "s3:PutStorageLensConfiguration",
+          "s3:ListMultiRegionAccessPoints",
+          "s3:CreateJob"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : "s3:*",
+        "Resource" : "${aws_s3_bucket.registry.arn}/*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : "s3:*",
+        "Resource" : "${aws_s3_bucket.registry.arn}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_instance_profile" "registry" {
+  name = "${var.domain}-registry"
+  role = "${var.domain}-registry"
+}
+
 resource "aws_instance" "registry" {
   ami                    = var.ami_id
   availability_zone      = var.availability_zone
@@ -73,6 +161,7 @@ resource "aws_instance" "registry" {
   key_name               = var.ssh_key_name
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.registry.id]
+  iam_instance_profile   = aws_iam_instance_profile.registry.name
   tags = {
     # This is.... deeply frustrating.
     # https://github.com/hashicorp/terraform-provider-aws/issues/19583
@@ -104,6 +193,10 @@ resource "aws_instance" "registry" {
   user_data = templatefile(
     "${path.module}/quay.sh.tftpl", {
       ec2_user_password = var.instance_password
+      redhat_username   = var.redhat_username
+      redhat_password   = var.redhat_password
+      registry_admin    = var.registry_admin
+      registry_hostname = "${var.hostname}.${var.domain}"
     }
   )
 }

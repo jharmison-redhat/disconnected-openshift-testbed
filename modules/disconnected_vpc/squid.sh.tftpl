@@ -69,16 +69,7 @@ EOF
 
 /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
 
-# Lock down SSH a bit
-mkdir -p /etc/ssh/sshd_config.d
-if ! grep -qF 'sshd_config.d' /etc/ssh/sshd_config; then
-    echo 'Include /etc/ssh/sshd_config.d/*.conf' >> /etc/ssh/sshd_config
-fi
-cat > /etc/ssh/sshd_config.d/90-lockdown.conf << 'EOF'
-PasswordAuthentication no
-PermitRootLogin no
-EOF
 %{ if ec2_user_password != "" }
-echo '${ec2_user_password}' | sudo passwd --stdin ec2-user
+echo '${ec2_user_password}' | passwd --stdin ec2-user
 %{ endif }
-sudo reboot now
+dnf needs-restarting -r || reboot now

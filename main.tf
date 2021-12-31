@@ -56,4 +56,7 @@ module "registry" {
   domain            = "${var.cluster_name}.${var.cluster_domain}"
   hosted_zone       = data.aws_route53_zone.public.id
   instance_password = var.instance_password
+  redhat_username   = var.redhat_username
+  redhat_password   = var.redhat_password
+  registry_admin    = var.registry_admin
 }

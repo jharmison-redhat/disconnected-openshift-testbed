@@ -36,6 +36,10 @@ module "testbed" {
   cluster_name      = "${var.cluster_name}_${random_string.name_suffix.result}"
   cluster_domain    = var.cluster_domain
   instance_password = random_password.instance_password.result
+  # These enable us to set up and configure a Red Hat Quay instance
+  redhat_username = var.redhat_username
+  redhat_password = var.redhat_password
+  registry_admin  = var.registry_admin
 }
 
 provider "aws" {
