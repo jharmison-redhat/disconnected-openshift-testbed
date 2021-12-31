@@ -45,7 +45,7 @@ resource "aws_instance" "registry" {
   }
 
   user_data = templatefile(
-    "${path.module}/quay.sh.tpl", {
+    "${path.module}/quay.sh.tftpl", {
       ec2_user_password = var.instance_password
     }
   )

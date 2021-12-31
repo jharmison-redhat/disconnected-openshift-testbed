@@ -41,6 +41,7 @@ variable "instance_password" {
   type        = string
   description = "The password to set for the ec2-user on created instances."
   sensitive   = true
+  default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
 
 variable "cluster_name" {

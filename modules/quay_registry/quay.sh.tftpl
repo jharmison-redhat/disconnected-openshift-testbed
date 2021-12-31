@@ -25,7 +25,7 @@ roles:
 REQUIREMENTS
 
 ansible-galaxy install -r requirements.yml
-
+%{ if ec2_user_password != "" }
 echo '${ec2_user_password}' | sudo passwd --stdin ec2-user
-
+%{ endif }
 sudo reboot now

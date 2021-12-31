@@ -33,6 +33,7 @@ variable "instance_password" {
   type        = string
   description = "The password to set for the ec2-user on the registry instance."
   sensitive   = true
+  default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
 
 variable "domain" {

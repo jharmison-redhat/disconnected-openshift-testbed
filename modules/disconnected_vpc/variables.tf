@@ -34,4 +34,5 @@ variable "proxy_instance_password" {
   type        = string
   description = "The password to set for the ec2-user on the proxy instance."
   sensitive   = true
+  default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
