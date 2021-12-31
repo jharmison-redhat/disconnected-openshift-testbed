@@ -80,7 +80,7 @@ resource "aws_security_group" "registry" {
 #tfsec:ignore:aws-s3-enable-bucket-encryption tfsec:ignore:aws-s3-enable-bucket-logging tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "registry" {
   force_destroy = true
-  bucket        = "${var.domain}-registry"
+  bucket        = "${replace(var.domain, ".", "-")}-registry"
   acl           = "private"
 }
 
@@ -171,7 +171,7 @@ resource "aws_instance" "registry" {
 
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = 500
+    volume_size           = 20
     delete_on_termination = true
   }
 
