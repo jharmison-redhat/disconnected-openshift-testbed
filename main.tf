@@ -43,6 +43,7 @@ module "vpc" {
   proxy_flavor            = var.small_flavor
   proxy_ssh_key           = aws_key_pair.ec2_key.key_name
   proxy_instance_password = var.instance_password
+  allowed_urls            = concat([".${var.cluster_name}.${var.cluster_domain}"], var.extra_urls)
 }
 
 module "registry" {

@@ -36,3 +36,9 @@ variable "proxy_instance_password" {
   sensitive   = true
   default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
+
+variable "allowed_urls" {
+  type        = list(string)
+  description = "The exact lines that should be whitelisted on the Squid proxy that isolates the \"disconnected\" subnets. (ex: \".amazonaws.com\")"
+  default     = []
+}

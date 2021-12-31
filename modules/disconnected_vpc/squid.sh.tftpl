@@ -19,8 +19,13 @@ openssl req -new -key squid.key -out squid.csr -subj "/C=US/ST=VA/L=squid/O=squi
 openssl x509 -req -days 3650 -in squid.csr -signkey squid.key -out squid.crt
 cat squid.key squid.crt >> squid.pem
 
+# Standard whitelist
 echo '.amazonaws.com' > /etc/squid/whitelist.txt
 echo '.cloudfront.net' >> /etc/squid/whitelist.txt
+# Dynamic whitelist
+%{ for url in allowed_urls }
+echo '${url}' >> /etc/squid/whitelist.txt
+%{ endfor }
 
 cat > /etc/squid/squid.conf << 'EOF'
 

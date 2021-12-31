@@ -53,3 +53,9 @@ variable "cluster_domain" {
   type        = string
   description = "The name of the domain under which your OpenShift cluster will reside (Note that this needs to be a Hosted Zone managed in Route53)."
 }
+
+variable "extra_urls" {
+  type        = list(string)
+  description = "The list of URLs that will be allowed through the squid proxy, exactly as they would be in a squid whitelist (ex: \".amazonaws.com\")."
+  default     = []
+}
