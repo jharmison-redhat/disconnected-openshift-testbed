@@ -1,8 +1,8 @@
 TODO
 ----
 
-- [ ] Lock down SSH by default, disable password and root login and enable fail2ban
-- [ ] Security group for Quay
+- [x] Lock down SSH by default, disable password and root login ~~and enable fail2ban~~
+- [x] Security group for Quay
 - [ ] Quay installation via Ansible worked out
 - [ ] Bastion host creation on disconnected VPC
 - [ ] Validate connectivity between bastion and Quay

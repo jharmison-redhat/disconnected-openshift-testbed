@@ -141,6 +141,7 @@ resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.vpc.id
 
   ingress {
+    description = "Allow incoming SSH connections."
     from_port   = "22"
     to_port     = "22"
     protocol    = "tcp"
@@ -148,13 +149,23 @@ resource "aws_default_security_group" "default" {
   }
 
   ingress {
-    protocol  = -1
-    self      = true
-    from_port = 0
-    to_port   = 0
+    description = "Allow all inter-VPC ingresses."
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  ingress {
+    description = "Allow incoming pings."
+    from_port   = 8
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
+    description = "Allow full egress"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
