@@ -70,7 +70,11 @@ EOF
 /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
 
 # Lock down SSH a bit
-cat > /etc/ssh/sshd_config/90-lockdown.conf << 'EOF'
+mkdir -p /etc/ssh/sshd_config.d
+if ! grep -qF 'sshd_config.d' /etc/ssh/sshd_config; then
+    echo 'Include /etc/ssh/sshd_config.d/*.conf' >> /etc/ssh/sshd_config
+fi
+cat > /etc/ssh/sshd_config.d/90-lockdown.conf << 'EOF'
 PasswordAuthentication no
 PermitRootLogin no
 EOF
