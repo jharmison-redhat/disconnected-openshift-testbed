@@ -1,18 +1,17 @@
 #!/bin/bash
 
 sudo dnf -y update
-sudo dnf -y install '@container-tools' python36-pip
+sudo dnf -y install '@container-tools' python39-pip
 
-pip3 install --user upgrade pip setuptools wheel
+sudo -iu ec2-user pip-3.9 install --user --upgrade pip setuptools wheel
 
-cat << REQUIREMENTS > requirements.txt
+cat << REQUIREMENTS > /home/ec2-user/requirements.txt
 jmespath
 cryptography
 ansible
-ansible-galaxy
 REQUIREMENTS
 
-pip3 install --user -r requirements.txt
+sudo -iu ec2-user pip-3.9 install --user -r /home/ec2-user/requirements.txt
 
 cat << REQUIREMENTS > requirements.yml
 ---
@@ -24,7 +23,7 @@ roles:
 - jharmison_redhat.redhat_quay
 REQUIREMENTS
 
-ansible-galaxy install -r requirements.yml
+sudo -iu ec2-user ansible-galaxy install -r /home/ec2-user/requirements.yml
 
 # Lock down SSH a bit
 cat > /etc/ssh/sshd_config/90-lockdown.conf << 'EOF'
