@@ -72,7 +72,7 @@ resource "aws_instance" "registry" {
   monitoring             = false
   key_name               = var.ssh_key_name
   subnet_id              = var.subnet_id
-  vpc_security_group_ids = aws_security_group.registry.id
+  vpc_security_group_ids = [aws_security_group.registry.id]
   tags = {
     # This is.... deeply frustrating.
     # https://github.com/hashicorp/terraform-provider-aws/issues/19583
