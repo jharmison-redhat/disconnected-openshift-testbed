@@ -68,3 +68,13 @@ variable "registry_admin" {
   description = "The username, password, and email to configure for the admin user on the Quay instance."
   sensitive   = true
 }
+
+variable "cert_style" {
+  type        = string
+  description = "The style of certificate to use for the registry instance."
+  default     = "letsencrypt"
+  validation {
+    condition     = contains(["letsencrypt", "selfsigned"], var.cert_style)
+    error_message = "The cert_style value must be one of letsencrypt or selfsigned."
+  }
+}

@@ -93,26 +93,8 @@ resource "aws_s3_bucket_public_access_block" "registry" {
   restrict_public_buckets = true
 }
 
-resource "aws_iam_role" "registry" {
+resource "aws_iam_policy" "registry" {
   name = "${var.domain}-registry"
-  path = "/"
-  assume_role_policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Action" : "sts:AssumeRole",
-        "Principal" : {
-          "Service" : "ec2.amazonaws.com"
-        },
-        "Effect" : "Allow",
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy" "registry" {
-  name = "${var.domain}-registry"
-  role = aws_iam_role.registry.id
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -147,9 +129,17 @@ resource "aws_iam_role_policy" "registry" {
   })
 }
 
-resource "aws_iam_instance_profile" "registry" {
+resource "aws_iam_user" "registry" {
   name = "${var.domain}-registry"
-  role = "${var.domain}-registry"
+}
+
+resource "aws_iam_user_policy_attachment" "registry" {
+  user       = aws_iam_user.registry.name
+  policy_arn = aws_iam_policy.registry.arn
+}
+
+resource "aws_iam_access_key" "registry" {
+  user = aws_iam_user.registry.name
 }
 
 resource "aws_instance" "registry" {
@@ -161,7 +151,6 @@ resource "aws_instance" "registry" {
   key_name               = var.ssh_key_name
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.registry.id]
-  iam_instance_profile   = aws_iam_instance_profile.registry.name
   tags = {
     # This is.... deeply frustrating.
     # https://github.com/hashicorp/terraform-provider-aws/issues/19583
@@ -192,13 +181,16 @@ resource "aws_instance" "registry" {
 
   user_data = templatefile(
     "${path.module}/quay.sh.tftpl", {
-      ec2_user_password  = var.instance_password
-      redhat_username    = var.redhat_username
-      redhat_password    = var.redhat_password
-      registry_admin     = var.registry_admin
-      registry_hostname  = "${var.hostname}.${var.domain}"
-      registry_s3_bucket = aws_s3_bucket.registry.bucket
-      registry_s3_region = aws_s3_bucket.registry.region
+      ec2_user_password   = var.instance_password
+      redhat_username     = var.redhat_username
+      redhat_password     = var.redhat_password
+      registry_admin      = var.registry_admin
+      registry_hostname   = "${var.hostname}.${var.domain}"
+      registry_s3_bucket  = aws_s3_bucket.registry.bucket
+      registry_s3_region  = aws_s3_bucket.registry.region
+      registry_iam_id     = aws_iam_access_key.registry.id
+      registry_iam_secret = aws_iam_access_key.registry.secret
+      registry_cert_style = var.cert_style
     }
   )
 }

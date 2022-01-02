@@ -36,8 +36,12 @@ cat << PLAYBOOK > /home/ec2-user/playbook.yml
         password: '${registry_admin.password}'
         email: '${registry_admin.email}'
       registry_hostname: '${registry_hostname}'
-      registry_s3_region: '${registry_s3_region}'
-      registry_s3_bucket: '${registry_s3_bucket}'
+      registry_storage_details:
+        host: 's3.${registry_s3_region}.amazonaws.com'
+        s3_bucket: '${registry_s3_bucket}'
+        s3_access_key: '${registry_iam_id}'
+        s3_secret_key: '${registry_iam_secret}'
+      cert_style: '${registry_cert_style}'
 PLAYBOOK
 
 cat << FIRSTBOOT > /root/firstboot.sh
