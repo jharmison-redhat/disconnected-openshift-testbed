@@ -38,6 +38,7 @@ resource "aws_instance" "proxy" {
   )
 
   tags = {
+    Name = "proxy.${var.domain}"
     Role = "proxy"
   }
 }

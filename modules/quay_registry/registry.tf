@@ -64,9 +64,7 @@ resource "aws_instance" "registry" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.registry.id]
   tags = {
-    # This is.... deeply frustrating.
-    # https://github.com/hashicorp/terraform-provider-aws/issues/19583
-    Name = "registry"
+    Name = "${var.hostname}.${var.domain}"
     Role = "registry"
   }
 
@@ -111,6 +109,12 @@ resource "aws_eip" "registry" {
   vpc               = true
   instance          = aws_instance.registry.id
   network_interface = aws_instance.registry.primary_network_interface_id
+
+  lifecycle {
+    ignore_changes = [
+      tags_all
+    ]
+  }
 }
 
 resource "aws_route53_record" "registry" {

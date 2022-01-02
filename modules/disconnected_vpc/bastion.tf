@@ -36,6 +36,7 @@ resource "aws_instance" "bastion" {
   )
 
   tags = {
+    Name = "bastion.${var.domain}"
     Role = "bastion"
   }
 }
@@ -44,6 +45,12 @@ resource "aws_eip" "bastion" {
   vpc               = true
   instance          = aws_instance.bastion.id
   network_interface = aws_instance.bastion.primary_network_interface_id
+
+  lifecycle {
+    ignore_changes = [
+      tags_all
+    ]
+  }
 }
 
 resource "aws_route53_record" "bastion" {
