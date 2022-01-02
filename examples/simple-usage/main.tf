@@ -14,6 +14,7 @@ module "testbed" {
   redhat_username = var.redhat_username
   redhat_password = var.redhat_password
   registry_admin  = var.registry_admin
+  cert_style      = var.cert_style
 }
 
 provider "aws" {
