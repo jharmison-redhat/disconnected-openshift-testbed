@@ -71,6 +71,8 @@ EOF
 
 /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
 
+sudo -u squid /usr/lib64/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB
+
 %{ if ec2_user_password != "" }
 echo '${ec2_user_password}' | passwd --stdin ec2-user
 %{ endif }
