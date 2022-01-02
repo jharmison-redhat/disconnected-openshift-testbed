@@ -3,7 +3,7 @@
 hostnamectl set-hostname ${hostname}
 
 dnf -y update
-dnf -y install python39 squid
+dnf -y install python39 squid iptables
 
 systemctl enable --now squid
 sleep 5
