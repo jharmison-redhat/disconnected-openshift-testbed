@@ -1,11 +1,11 @@
 # The proxy instance lives in the NAT subnet
 resource "aws_instance" "proxy" {
-  ami               = var.proxy_ami
+  ami               = var.ami_id
   availability_zone = var.availability_zones[0]
   ebs_optimized     = true
   instance_type     = var.proxy_flavor
   monitoring        = false
-  key_name          = var.proxy_ssh_key
+  key_name          = var.ssh_key
   subnet_id         = aws_subnet.nat.id
   source_dest_check = false
 
@@ -32,7 +32,7 @@ resource "aws_instance" "proxy" {
 
   user_data = templatefile(
     "${path.module}/squid.sh.tftpl", {
-      ec2_user_password = var.proxy_instance_password
+      ec2_user_password = var.instance_password
       allowed_urls      = var.allowed_urls
     }
   )

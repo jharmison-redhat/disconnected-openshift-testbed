@@ -37,13 +37,16 @@ resource "aws_key_pair" "ec2_key" {
 }
 
 module "vpc" {
-  source                  = "./modules/disconnected_vpc"
-  availability_zones      = slice(data.aws_availability_zones.available.names, 1, 4)
-  proxy_ami               = data.aws_ami.rhel.id
-  proxy_flavor            = var.small_flavor
-  proxy_ssh_key           = aws_key_pair.ec2_key.key_name
-  proxy_instance_password = var.instance_password
-  allowed_urls            = concat([".${var.cluster_name}.${var.cluster_domain}"], var.extra_urls)
+  source             = "./modules/disconnected_vpc"
+  availability_zones = slice(data.aws_availability_zones.available.names, 1, 4)
+  ami_id             = data.aws_ami.rhel.id
+  proxy_flavor       = var.small_flavor
+  bastion_flavor     = var.large_flavor
+  ssh_key            = aws_key_pair.ec2_key.key_name
+  instance_password  = var.instance_password
+  allowed_urls       = concat([".${var.cluster_name}.${var.cluster_domain}"], var.extra_urls)
+  domain             = "${var.cluster_name}.${var.cluster_domain}"
+  hosted_zone        = data.aws_route53_zone.public.id
 }
 
 module "registry" {
