@@ -1,7 +1,9 @@
 #!/bin/bash
 
-sudo dnf -y update
-sudo dnf -y install python39 squid
+hostnamectl set-hostname ${hostname}
+
+dnf -y update
+dnf -y install python39 squid
 
 systemctl enable --now squid
 sleep 5

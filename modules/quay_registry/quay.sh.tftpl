@@ -1,7 +1,9 @@
 #!/bin/bash
 
-sudo dnf -y update
-sudo dnf -y install '@container-tools' python39-pip
+hostnamectl set-hostname ${registry_hostname}
+
+dnf -y update
+dnf -y install '@container-tools' python39-pip
 
 pip-3.9 install --upgrade pip setuptools wheel
 

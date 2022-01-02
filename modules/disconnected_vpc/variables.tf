@@ -54,6 +54,12 @@ variable "domain" {
   description = "The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the bastion."
 }
 
+variable "proxy_hostname" {
+  type        = string
+  description = "The hostname to use when building the proxy instance and creating Route 53 records for it."
+  default     = "proxy"
+}
+
 variable "bastion_hostname" {
   type        = string
   description = "The hostname to use when building the bastion instance and creating Route 53 records for it."

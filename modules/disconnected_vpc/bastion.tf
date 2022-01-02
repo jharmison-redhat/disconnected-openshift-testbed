@@ -31,6 +31,7 @@ resource "aws_instance" "bastion" {
 
   user_data = templatefile(
     "${path.module}/bastion.sh.tftpl", {
+      hostname          = "${var.bastion_hostname}.${var.domain}"
       ec2_user_password = var.instance_password
     }
   )
