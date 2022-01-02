@@ -22,9 +22,23 @@ variable "proxy_ami" {
 variable "proxy_flavor" {
   type        = string
   description = "The instance type to use for the proxy instance."
+  default     = "t3.small"
 }
 
 variable "proxy_ssh_key" {
   type        = string
   description = "The SSH public key to use for the proxy instance - must already exist as an aws_key_pair!"
+}
+
+variable "proxy_instance_password" {
+  type        = string
+  description = "The password to set for the ec2-user on the proxy instance."
+  sensitive   = true
+  default     = "" # Empty default means no password tfsec:ignore:GEN001
+}
+
+variable "allowed_urls" {
+  type        = list(string)
+  description = "The exact lines that should be whitelisted on the Squid proxy that isolates the \"disconnected\" subnets. (ex: \".amazonaws.com\")"
+  default     = []
 }

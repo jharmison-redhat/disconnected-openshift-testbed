@@ -33,7 +33,7 @@ resource "aws_subnet" "public" {
   availability_zone       = var.availability_zones[count.index]
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) + count.index)
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = {
     Role = "public"
   }
@@ -44,7 +44,7 @@ resource "aws_subnet" "nat" {
   availability_zone       = var.availability_zones[0]
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = cidrsubnet(var.vpc_cidr, 4, length(var.availability_zones) * 2)
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = {
     Role = "nat"
   }
@@ -75,15 +75,14 @@ resource "aws_default_route_table" "public" {
 
 # The proxy instance lives in the NAT subnet
 resource "aws_instance" "proxy" {
-  ami                         = var.proxy_ami
-  availability_zone           = var.availability_zones[0]
-  ebs_optimized               = true
-  instance_type               = var.proxy_flavor
-  monitoring                  = false
-  key_name                    = var.proxy_ssh_key
-  subnet_id                   = aws_subnet.nat.id
-  associate_public_ip_address = true #tfsec:ignore:AWS012
-  source_dest_check           = false
+  ami               = var.proxy_ami
+  availability_zone = var.availability_zones[0]
+  ebs_optimized     = true
+  instance_type     = var.proxy_flavor
+  monitoring        = false
+  key_name          = var.proxy_ssh_key
+  subnet_id         = aws_subnet.nat.id
+  source_dest_check = false
 
   root_block_device {
     volume_type           = "gp2"
@@ -92,10 +91,26 @@ resource "aws_instance" "proxy" {
   }
 
   metadata_options {
-    http_tokens = "required"
-  } 
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
 
-  user_data = file("${path.module}/squid.sh")
+  lifecycle {
+    ignore_changes = [
+      # AWS updates these dynamically, do not interfere.
+      tags["ServiceOwner"],
+      tags_all["ServiceOwner"],
+      root_block_device["tags"]
+    ]
+  }
+
+  user_data = templatefile(
+    "${path.module}/squid.sh.tftpl", {
+      ec2_user_password = var.proxy_instance_password
+      allowed_urls      = var.allowed_urls
+    }
+  )
 
   tags = {
     Role = "proxy"
@@ -120,4 +135,40 @@ resource "aws_route_table_association" "private" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
+}
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.vpc.id
+
+  ingress {
+    description = "Allow incoming SSH connections."
+    from_port   = "22"
+    to_port     = "22"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow all inter-VPC ingresses."
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  ingress {
+    description = "Allow incoming pings."
+    from_port   = 8
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow full egress"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }

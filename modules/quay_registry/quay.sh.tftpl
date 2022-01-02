@@ -1,0 +1,58 @@
+#!/bin/bash
+
+sudo dnf -y update
+sudo dnf -y install '@container-tools' python39-pip
+
+pip-3.9 install --upgrade pip setuptools wheel
+
+cat << REQUIREMENTS > /root/requirements.txt
+jmespath
+cryptography
+ansible
+REQUIREMENTS
+
+pip-3.9 install -r /root/requirements.txt
+
+cat << REQUIREMENTS > /home/ec2-user/requirements.yml
+---
+collections:
+- ansible.posix
+- containers.podman
+- community.crypto
+roles:
+- jharmison_redhat.redhat_quay
+REQUIREMENTS
+
+cat << PLAYBOOK > /home/ec2-user/playbook.yml
+---
+- hosts: localhost
+  roles:
+  - role: jharmison_redhat.redhat_quay
+    vars:
+      redhat_username: '${redhat_username}'
+      redhat_password: '${redhat_password}'
+      registry_admin:
+        username: '${registry_admin.username}'
+        password: '${registry_admin.password}'
+        email: '${registry_admin.email}'
+      registry_hostname: '${registry_hostname}'
+      registry_storage_details:
+        host: 's3.${registry_s3_region}.amazonaws.com'
+        s3_bucket: '${registry_s3_bucket}'
+        s3_access_key: '${registry_iam_id}'
+        s3_secret_key: '${registry_iam_secret}'
+      cert_style: '${registry_cert_style}'
+PLAYBOOK
+
+cat << FIRSTBOOT > /root/firstboot.sh
+#!/bin/bash
+sudo -iu ec2-user /usr/local/bin/ansible-galaxy install -r /home/ec2-user/requirements.yml
+sudo -iu ec2-user /usr/local/bin/ansible-playbook /home/ec2-user/playbook.yml
+FIRSTBOOT
+chmod +x /root/firstboot.sh
+echo '@reboot root /root/firstboot.sh' >> /etc/crontab
+
+%{ if ec2_user_password != "" }
+echo '${ec2_user_password}' | passwd --stdin ec2-user
+%{ endif }
+dnf needs-restarting -r || reboot now

@@ -1,8 +1,9 @@
 output "private_subnets" {
-  value       = [aws_subnet.private.*.id]
+  value       = [for subnet in aws_subnet.private : subnet.id]
   description = "The IDs of the subnets that route through the proxy."
 }
+
 output "public_subnets" {
-  value       = [aws_subnet.public.*.id]
+  value       = [for subnet in aws_subnet.public : subnet.id]
   description = "The IDs of the subnets that route through the IGW."
 }
