@@ -41,24 +41,3 @@ resource "aws_instance" "bastion" {
     Role = "bastion"
   }
 }
-
-resource "aws_eip" "bastion" {
-  vpc               = true
-  instance          = aws_instance.bastion.id
-  network_interface = aws_instance.bastion.primary_network_interface_id
-
-  lifecycle {
-    ignore_changes = [
-      tags_all
-    ]
-  }
-}
-
-resource "aws_route53_record" "bastion" {
-  zone_id         = var.hosted_zone
-  name            = "${var.bastion_hostname}.${var.domain}"
-  type            = "A"
-  ttl             = "300"
-  records         = [aws_eip.bastion.public_ip]
-  allow_overwrite = true
-}
