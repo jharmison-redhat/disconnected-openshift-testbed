@@ -8,8 +8,13 @@ dnf -y install python39 squid iptables
 systemctl enable --now squid
 sleep 5
 
+# Ensure that incoming connections go to high ports that squid can react to
 iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3129
 iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 3130
+
+# Enable routing
+sysctl net.ipv4.ip_forward=1
+echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
 
 cp -a /etc/squid /etc/squid_orig
 
@@ -71,6 +76,7 @@ EOF
 
 /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
 
+# Required to enable TLS bumping
 sudo -u squid /usr/lib64/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB
 
 %{ if ec2_user_password != "" }
