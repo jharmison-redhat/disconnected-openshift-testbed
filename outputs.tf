@@ -20,7 +20,7 @@ output "vpc" {
   value = {
     public_subnets     = module.vpc.public_subnets
     private_subnets    = module.vpc.private_subnets
-    availability_zones = slice(data.aws_availability_zones.available.names, 1, 4)
+    availability_zones = slice(data.aws_availability_zones.available.names, 0, 3)
     region             = data.aws_region.current.name
   }
   description = "Information about the provisioned VPC and its networks."

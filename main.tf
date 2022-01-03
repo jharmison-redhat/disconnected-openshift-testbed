@@ -40,7 +40,7 @@ resource "aws_key_pair" "ec2_key" {
 
 module "vpc" {
   source             = "./modules/disconnected_vpc"
-  availability_zones = slice(data.aws_availability_zones.available.names, 1, 4)
+  availability_zones = slice(data.aws_availability_zones.available.names, 0, 3)
   ami_id             = data.aws_ami.rhel.id
   proxy_flavor       = var.small_flavor
   bastion_flavor     = var.large_flavor
@@ -52,7 +52,7 @@ module "vpc" {
 
 module "registry" {
   source            = "./modules/quay_registry"
-  availability_zone = data.aws_availability_zones.available.names[1]
+  availability_zone = data.aws_availability_zones.available.names[0]
   ami_id            = data.aws_ami.rhel.id
   flavor            = var.large_flavor
   ssh_key_name      = aws_key_pair.ec2_key.key_name
