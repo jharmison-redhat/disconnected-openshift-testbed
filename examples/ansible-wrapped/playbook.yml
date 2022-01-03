@@ -1,0 +1,131 @@
+---
+- name: Provision the infrastructure
+  hosts: controller
+  vars:
+    terraform_variables:
+      cluster_name: '{{ cluster_name }}'
+      cluster_domain: '{{ cluster_domain }}'
+      public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC5Da2XARZmB8KsjASv6MQoAS6sAXrw0yE5Y8ANJ5yTG
+      region: '{{ aws_region }}'
+    cert_directory: '{{ playbook_dir }}/output'
+  tasks:
+  - name: Run a deployment with terraform
+    community.general.terraform:
+      project_path: '{{ playbook_dir }}/terraform'
+      force_init: true
+      overwrite_init: false
+      check_destroy: true
+      state: present
+      variables: '{{ terraform_variables }}'
+    register: terraform
+  # TODO: Add hosts, generate SSH key dynamically instead of predefining, finish fleshing out variables
+  - debug: var=terraform
+  - fail:
+  - name: Generate self-signed private key for proxy
+    community.crypto.openssl_privatekey:
+      path: '{{ cert_directory }}/squid.key'
+  - name: Generate self-signed certificate signing request for proxy
+    community.crypto.openssl_csr:
+      path: '{{ cert_directory }}/squid.csr'
+      privatekey_path: '{{ cert_directory }}/squid.key'
+      country_name: '{{ cert_country|default("US") }}'
+      organization_name: squid
+      common_name: squid
+  - name: Generate self-signed certificate for proxy
+    community.crypto.x509_certificate:
+      path: '{{ cert_directory }}/squid.crt'
+      csr_path: '{{ cert_directory }}/squid.csr'
+      privatekey_path: '{{ cert_directory }}/squid.key'
+      provider: selfsigned
+  - name: Save fullchain
+    command: cat {{ cert_directory }}/squid.key {{ cert_directory }}/squid.crt
+    register: fullchain
+
+- name: Configure Red Hat Quay
+  hosts: registry
+  vars:
+    redhat_username: jharmison
+    redhat_password: some super secure password
+    registry_admin:
+      username: james
+      password: some other super secure password
+      email: jharmison@redhat.com
+    registry_hostname: 'registry.{{ cluster_name }}.{{ cluster_domain }}'
+  roles:
+  - role: jharmison_redhat.redhat_quay
+    vars:
+      redhat_username: '{{ redhat_username }}'
+      redhat_password: '{{ redhat_password }}'
+      registry_admin:
+        username: '{{ registry_admin.username }}'
+        password: '{{ registry_admin.password }}'
+        email: '{{ registry_admin.email }}'
+      registry_hostname: '{{ registry_hostname }}'
+      registry_storage_details:
+        host: 's3.{{ aws_region }}.amazonaws.com'
+        s3_bucket: '{registry_s3_bucket}'
+        s3_access_key: '${registry_iam_id}'
+        s3_secret_key: '${registry_iam_secret}'
+      cert_style: '${registry_cert_style}'
+
+- name: Configure Squid
+  hosts: proxy
+  become: true
+  handlers:
+  - name: Reconfigure Squid
+    shell: /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
+  - name: Generate Squid SSL database
+    become_user: squid
+    shell: /usr/lib64/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB
+  vars:
+    allowed_urls:
+    - ".{{ cluster_name }}.{{ cluster_domain }}"
+    squid_cert_dir: /etc/squid/ssl
+  tasks:
+  - name: Install Squid and IPTables
+    package:
+      name:
+      - squid
+      - iptables
+      state: installed
+    notify: Generate Squid SSL database
+  - name: Ensure Squid is running and enabled
+    systemd:
+      name: squid
+      state: started
+      enabled: yes
+  - name: Redirect ports for incoming squid connections
+    iptables:
+      table: nat
+      chain: PREROUTING
+      protocol: tcp
+      match: tcp
+      destination_port: '{{ item.from }}'
+      jump: REDIRECT
+      to_ports: '{{ item.to }}'
+      comment: Squid redirect
+    loop:
+    - from: 80
+      to: 3129
+    - from: 443
+      to: 3130
+  - name: Enable routing
+    ansible.posix.sysctl:
+      name: net.ipv4.ip_forward
+      value: '1'
+  - name: Ensure squid cert directory exists
+    file:
+      path: '{{ squid_cert_dir }}'
+      state: directory
+  - name: Drop certificates for use by squid
+    copy:
+      content: '{{ hostvars.controller.fullchain.stdout }}'
+      dest: '{{ squid_cert_dir }}/squid.pem'
+  - name: Template squid configuration
+    template:
+      src: '{{ item }}.j2'
+      dest: /etc/squid/{{ item }}
+    loop:
+    - squid.conf
+    - whitelist.txt
+    notify: Reconfigure Squid

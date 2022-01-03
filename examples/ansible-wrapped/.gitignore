@@ -1,0 +1,3 @@
+output/*
+!output/.gitkeep
+group_vars/all.yml
