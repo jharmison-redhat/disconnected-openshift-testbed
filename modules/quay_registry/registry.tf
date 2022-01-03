@@ -91,16 +91,8 @@ resource "aws_instance" "registry" {
 
   user_data = templatefile(
     "${path.module}/quay.sh.tftpl", {
-      ec2_user_password   = var.instance_password
-      redhat_username     = var.redhat_username
-      redhat_password     = var.redhat_password
-      registry_admin      = var.registry_admin
-      registry_hostname   = "${var.hostname}.${var.domain}"
-      registry_s3_bucket  = aws_s3_bucket.registry.bucket
-      registry_s3_region  = aws_s3_bucket.registry.region
-      registry_iam_id     = aws_iam_access_key.registry.id
-      registry_iam_secret = aws_iam_access_key.registry.secret
-      registry_cert_style = var.cert_style
+      ec2_user_password = var.instance_password
+      registry_hostname = "${var.hostname}.${var.domain}"
     }
   )
 }

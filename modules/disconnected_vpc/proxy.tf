@@ -34,7 +34,6 @@ resource "aws_instance" "proxy" {
     "${path.module}/squid.sh.tftpl", {
       hostname          = "${var.proxy_hostname}.${var.domain}"
       ec2_user_password = var.instance_password
-      allowed_urls      = var.allowed_urls
     }
   )
 

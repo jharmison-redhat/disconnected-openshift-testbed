@@ -30,21 +30,16 @@ module "testbed" {
   # means we can take advantage of cheaper instances like this:
   ami_type = "Access2"
   # This is required to be provided
-  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC5Da2XARZmB8KsjASv6MQoAS6sAXrw0yE5Y8ANJ5yTG"
+  public_key = var.public_key
   # These are required and here are generated semi-randomly to prevent naming
   # collisions
   cluster_name      = "${var.cluster_name}_${random_string.name_suffix.result}"
   cluster_domain    = var.cluster_domain
   instance_password = random_password.instance_password.result
-  # These enable us to set up and configure a Red Hat Quay instance
-  redhat_username = var.redhat_username
-  redhat_password = var.redhat_password
-  registry_admin  = var.registry_admin
-  cert_style      = var.cert_style
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = var.region
   default_tags {
     tags = {
       # I would like these to have obvious names, but alas....

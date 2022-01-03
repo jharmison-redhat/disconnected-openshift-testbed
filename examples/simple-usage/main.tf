@@ -10,15 +10,10 @@ module "testbed" {
   public_key     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC5Da2XARZmB8KsjASv6MQoAS6sAXrw0yE5Y8ANJ5yTG"
   cluster_name   = var.cluster_name
   cluster_domain = var.cluster_domain
-  # These enable us to set up and configure a Red Hat Quay instance
-  redhat_username = var.redhat_username
-  redhat_password = var.redhat_password
-  registry_admin  = var.registry_admin
-  cert_style      = var.cert_style
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = var.region
   default_tags {
     tags = {
       Name    = "${var.cluster_name}.${var.cluster_domain}"

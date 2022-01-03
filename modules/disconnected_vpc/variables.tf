@@ -43,15 +43,9 @@ variable "instance_password" {
   default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
 
-variable "allowed_urls" {
-  type        = list(string)
-  description = "The exact lines that should be whitelisted on the Squid proxy that isolates the \"disconnected\" subnets. (ex: \".amazonaws.com\")"
-  default     = []
-}
-
 variable "domain" {
   type        = string
-  description = "The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the bastion."
+  description = "The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the proxy."
 }
 
 variable "proxy_hostname" {
@@ -62,11 +56,11 @@ variable "proxy_hostname" {
 
 variable "bastion_hostname" {
   type        = string
-  description = "The hostname to use when building the bastion instance and creating Route 53 records for it."
+  description = "The hostname to use when building the bastion instance."
   default     = "bastion"
 }
 
 variable "hosted_zone" {
   type        = string
-  description = "The Route53 Hosted Zone ID which contains the domain for creating bastion records."
+  description = "The Route53 Hosted Zone ID which contains the domain for creating proxy records."
 }
