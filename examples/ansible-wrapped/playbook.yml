@@ -136,6 +136,7 @@
     allowed_urls:
     - ".{{ cluster_name }}.{{ cluster_domain }}"
     squid_cert_dir: /etc/squid/ssl
+    squid_fullchain: '{{ squid_cert_dir }}/squid.pem'
   handlers:
 
   - name: Reconfigure Squid
@@ -190,7 +191,7 @@
   - name: Drop certificates for use by squid
     copy:
       content: '{{ hostvars.controller.fullchain.stdout }}'
-      dest: '{{ squid_cert_dir }}/squid.pem'
+      dest: '{{ squid_fullchain }}'
 
   - name: Template squid configuration
     template:
