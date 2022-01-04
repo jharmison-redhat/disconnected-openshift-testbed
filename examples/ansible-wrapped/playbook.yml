@@ -31,16 +31,19 @@
     add_host:
       name: '{{ item.name }}'
       groups: '{{ ["terraformed"] + item.groups|default([]) }}'
-      ansible_hostname: '{{ item.hostname }}'
+      ansible_host: '{{ item.hostname }}'
       ansible_user: '{{ item.user }}'
       inventory_dir: '{{ inventory_dir }}'
       ansible_ssh_private_key_file: '{{ keypair.filename }}'
       ansible_ssh_common_args: >-
-        {% if item.jump_host|default(None) != None %}
-          {{ forgettable_host + ' -o ProxyCommand="ssh -W %h:%p -q ' + item.jump_host + '"' }}
-        {% else %}
+        {%- if item.jump_host|default(None) != None -%}
+          {{ forgettable_host + " " + proxy_command }}
+        {%- else -%}
           {{ forgettable_host }}
-        {% endif %}
+        {%- endif -%}
+    vars:
+      proxy_command: >-
+        -o 'ProxyCommand=ssh -W %h:%p {{ forgettable_host }} {{ item.jump_host|default(None) }}'
     changed_when: false
     loop:
     - name: registry
@@ -58,7 +61,7 @@
       - disconnected
       hostname: '{{ terraform.outputs.bastion_instance.value.private_ip }}'
       user: '{{ terraform.outputs.bastion_instance.value.username }}'
-      jump_host: -i '{{ keypair.filename }}' '{{ terraform.outputs.proxy_instance.value.username }}@{{ terraform.outputs.proxy_instance.value.hostname }}'
+      jump_host: -i "{{ keypair.filename }}" "{{ terraform.outputs.proxy_instance.value.username }}@{{ terraform.outputs.proxy_instance.value.hostname }}"
 
   - name: Output the information we added for these hosts
     debug:
