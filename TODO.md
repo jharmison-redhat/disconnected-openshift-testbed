@@ -6,9 +6,6 @@ TODO
 - [x] Security group for Quay
 - [x] Quay installation via Ansible worked out
 - [x] Bastion host creation on disconnected VPC
-  - Need to find best way to get CA from squid to bastion
-  - Need to describe how to ssh to bastion through proxy or registry (routing is otherwise borked, due to differing source IPs)
 - [ ] Validate connectivity between bastion and Quay
-  - This may require a private hosted zone
 - [ ] Automate quay organization creation
 - [ ] Validate oc-mirror workflows e2e
