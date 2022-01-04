@@ -117,6 +117,7 @@
   hosts: registry
   vars:
     registry_bucket: '{{ hostvars.controller.terraform.outputs.registry_bucket.value }}'
+    password_dir: '{{ playbook_dir }}/output'
   roles:
 
   - role: jharmison_redhat.redhat_quay
