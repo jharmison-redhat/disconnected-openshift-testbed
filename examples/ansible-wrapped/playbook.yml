@@ -47,6 +47,9 @@
   become: true
   vars:
     ca_cert_and_key: '{{ hostvars.controller.ca.stdout }}'
+    allowed_urls:
+    - .{{ cluster_name }}.{{ cluster_domain }}
+    - rhui3.{{ aws_region }}.aws.ce.redhat.com
   roles:
   - role: proxy
 
@@ -64,3 +67,23 @@
   - name: Update CA trust
     command: update-ca-trust
     when: anchors.changed
+  - name: Update packages
+    dnf:
+      name: '*'
+      state: latest
+  - name: Install container-tools
+    dnf:
+      name: '@container-tools'
+      state: installed
+  - name: Check if reboot is needed
+    command: dnf needs-rebooting -r
+    failed_when: false
+    register: needs_rebooting
+  - name: Reboot node
+    reboot:
+    when: needs_rebooting.rc != 0
+  - name: Login to quay registry to validate connection
+    containers.podman.podman_login:
+      username: '{{ registry_admin.username }}'
+      password: '{{ registry_admin.password }}'
+      registry: '{{ hostvars.registry.ansible_host }}'
