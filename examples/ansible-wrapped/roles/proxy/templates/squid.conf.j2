@@ -7,10 +7,11 @@ logfile_rotate 10
 debug_options rotate=10
 
 # Handle HTTP requests
+http_port 3128
 http_port 3129 intercept
 
 # Handle HTTPS requests
-https_port 3130 cert={{ squid_fullchain }} ssl-bump intercept
+https_port 3130 cert={{ squid_cert_and_key }} ssl-bump intercept
 acl SSL_port port 443
 http_access allow SSL_port
 acl step1 at_step SslBump1

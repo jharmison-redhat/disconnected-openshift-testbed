@@ -1,0 +1,12 @@
+---
+- name: Restart squid
+  systemd:
+    name: squid
+    state: restarted
+
+- name: Reconfigure Squid
+  shell: /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
+
+- name: Generate Squid SSL database
+  become_user: squid
+  shell: /usr/lib64/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB

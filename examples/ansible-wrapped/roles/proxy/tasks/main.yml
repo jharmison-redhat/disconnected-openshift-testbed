@@ -1,0 +1,60 @@
+---
+- name: Install Squid and IPTables
+  package:
+    name:
+    - squid
+    - iptables
+    state: installed
+  notify: Generate Squid SSL database
+
+- name: Ensure Squid is running and enabled
+  systemd:
+    name: squid
+    state: started
+    enabled: true
+  ignore_errors: true
+
+- name: Redirect ports for incoming squid connections
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    match: tcp
+    destination_port: '{{ item.from }}'
+    jump: REDIRECT
+    to_ports: '{{ item.to }}'
+    comment: Squid redirect
+  loop:
+  - from: 80
+    to: 3129
+  - from: 443
+    to: 3130
+
+- name: Enable routing
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+
+- name: Ensure squid cert directory exists
+  file:
+    path: '{{ squid_cert_dir }}'
+    state: directory
+
+- name: Drop certificates for use by squid
+  copy:
+    content: '{{ ca_cert_and_key }}'
+    dest: '{{ squid_cert_and_key }}'
+  notify:
+  - Reconfigure Squid
+  - Generate Squid SSL database
+
+- name: Template squid configuration
+  template:
+    src: '{{ item }}.j2'
+    dest: /etc/squid/{{ item }}
+  loop:
+  - squid.conf
+  - whitelist.txt
+  notify:
+  - Restart Squid
+  - Reconfigure Squid

@@ -1,0 +1,3 @@
+---
+cert_directory: '{{ playbook_dir }}/certs'
+forgettable_host: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes'
