@@ -121,19 +121,11 @@
 
   - role: jharmison_redhat.redhat_quay
     vars:
-      redhat_username: '{{ redhat_username }}'
-      redhat_password: '{{ redhat_password }}'
-      registry_admin:
-        username: '{{ registry_admin.username }}'
-        password: '{{ registry_admin.password }}'
-        email: '{{ registry_admin.email }}'
-      registry_hostname: '{{ ansible_hostname }}'
       registry_storage_details:
         host: s3.{{ registry_bucket.region }}.amazonaws.com
         s3_bucket: '{{ registry_bucket.bucket }}'
         s3_access_key: '{{ registry_bucket.access_key }}'
         s3_secret_key: '{{ registry_bucket.secret_key }}'
-      cert_style: '{{ registry_cert_style }}'
 
 - name: Configure Squid
   hosts: proxy
