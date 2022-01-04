@@ -25,3 +25,9 @@ output "vpc" {
   }
   description = "Information about the provisioned VPC and its networks."
 }
+
+output "registry_bucket" {
+  value       = module.registry.s3_bucket
+  sensitive   = true
+  description = "The AWS S3 bucket for the registry and IAM credentials required to access it."
+}

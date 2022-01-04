@@ -2,28 +2,72 @@
 - name: Provision the infrastructure
   hosts: controller
   vars:
-    terraform_variables:
-      cluster_name: '{{ cluster_name }}'
-      cluster_domain: '{{ cluster_domain }}'
-      public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC5Da2XARZmB8KsjASv6MQoAS6sAXrw0yE5Y8ANJ5yTG
-      region: '{{ aws_region }}'
     cert_directory: '{{ playbook_dir }}/output'
+    forgettable_host: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes'
   tasks:
-  - name: Run a deployment with terraform
+
+  - name: Generate an OpenSSH keypair
+    community.crypto.openssh_keypair:
+      path: '{{ cert_directory }}/{{ cluster_name }}_ed25519'
+      type: ed25519
+      comment: '{{ registry_admin.email }}'
+    register: keypair
+
+  - name: Apply a deployment with terraform
     community.general.terraform:
       project_path: '{{ playbook_dir }}/terraform'
       force_init: true
       overwrite_init: false
       check_destroy: true
       state: present
-      variables: '{{ terraform_variables }}'
+      variables:
+        cluster_name: '{{ cluster_name }}'
+        cluster_domain: '{{ cluster_domain }}'
+        public_key: '{{ keypair.public_key }}'
+        region: '{{ aws_region }}'
     register: terraform
-  # TODO: Add hosts, generate SSH key dynamically instead of predefining, finish fleshing out variables
-  - debug: var=terraform
-  - fail:
+
+  - name: Add the newly provisioned hosts to the inventory
+    add_host:
+      name: '{{ item.name }}'
+      groups: '{{ ["terraformed"] + item.groups|default([]) }}'
+      ansible_hostname: '{{ item.hostname }}'
+      ansible_user: '{{ item.user }}'
+      inventory_dir: '{{ inventory_dir }}'
+      ansible_ssh_private_key_file: '{{ keypair.filename }}'
+      ansible_ssh_common_args: >-
+        {% if item.jump_host|default(None) != None %}
+          {{ forgettable_host + ' -o ProxyCommand="ssh -W %h:%p -q ' + item.jump_host + '"' }}
+        {% else %}
+          {{ forgettable_host }}
+        {% endif %}
+    changed_when: false
+    loop:
+    - name: registry
+      groups:
+      - connected
+      hostname: '{{ terraform.outputs.registry_instance.value.hostname }}'
+      user: '{{ terraform.outputs.registry_instance.value.username }}'
+    - name: proxy
+      groups:
+      - connected
+      hostname: '{{ terraform.outputs.proxy_instance.value.hostname }}'
+      user: '{{ terraform.outputs.proxy_instance.value.username }}'
+    - name: bastion
+      groups:
+      - disconnected
+      hostname: '{{ terraform.outputs.bastion_instance.value.private_ip }}'
+      user: '{{ terraform.outputs.bastion_instance.value.username }}'
+      jump_host: -i '{{ keypair.filename }}' '{{ terraform.outputs.proxy_instance.value.username }}@{{ terraform.outputs.proxy_instance.value.hostname }}'
+
+  - name: Output the information we added for these hosts
+    debug:
+      var: hostvars|dict2items|rejectattr('key','search','controller')|list|items2dict
+
   - name: Generate self-signed private key for proxy
     community.crypto.openssl_privatekey:
       path: '{{ cert_directory }}/squid.key'
+
   - name: Generate self-signed certificate signing request for proxy
     community.crypto.openssl_csr:
       path: '{{ cert_directory }}/squid.csr'
@@ -31,27 +75,47 @@
       country_name: '{{ cert_country|default("US") }}'
       organization_name: squid
       common_name: squid
+
   - name: Generate self-signed certificate for proxy
     community.crypto.x509_certificate:
       path: '{{ cert_directory }}/squid.crt'
       csr_path: '{{ cert_directory }}/squid.csr'
       privatekey_path: '{{ cert_directory }}/squid.key'
       provider: selfsigned
+
   - name: Save fullchain
     command: cat {{ cert_directory }}/squid.key {{ cert_directory }}/squid.crt
+    changed_when: false
     register: fullchain
+
+
+- name: Wait for connectivity to all terraformed hosts
+  hosts: terraformed
+  tasks:
+
+  - name: Confirm basic ansible connectivity
+    ping:
+
+  - name: Confirm connectivity reached all hosts
+    run_once: true
+    assert:
+      that:
+      - ansible_play_hosts == ansible_play_hosts_all
+
+  - name: Wait for cloud-init to complete
+    stat:
+      path: /var/lib/cloud/instance/boot-finished
+    register: boot_finished
+    until: boot_finished.stat.exists
+    retries: 60
+    delay: 10
 
 - name: Configure Red Hat Quay
   hosts: registry
   vars:
-    redhat_username: jharmison
-    redhat_password: some super secure password
-    registry_admin:
-      username: james
-      password: some other super secure password
-      email: jharmison@redhat.com
-    registry_hostname: 'registry.{{ cluster_name }}.{{ cluster_domain }}'
+    registry_bucket: '{{ hostvars.controller.terraform.outputs.registry_bucket.value }}'
   roles:
+
   - role: jharmison_redhat.redhat_quay
     vars:
       redhat_username: '{{ redhat_username }}'
@@ -60,28 +124,32 @@
         username: '{{ registry_admin.username }}'
         password: '{{ registry_admin.password }}'
         email: '{{ registry_admin.email }}'
-      registry_hostname: '{{ registry_hostname }}'
+      registry_hostname: '{{ ansible_hostname }}'
       registry_storage_details:
-        host: 's3.{{ aws_region }}.amazonaws.com'
-        s3_bucket: '{registry_s3_bucket}'
-        s3_access_key: '${registry_iam_id}'
-        s3_secret_key: '${registry_iam_secret}'
-      cert_style: '${registry_cert_style}'
+        host: s3.{{ registry_bucket.region }}.amazonaws.com
+        s3_bucket: '{{ registry_bucket.bucket }}'
+        s3_access_key: '{{ registry_bucket.access_key }}'
+        s3_secret_key: '{{ registry_bucket.secret_key }}'
+      cert_style: '{{ registry_cert_style }}'
 
 - name: Configure Squid
   hosts: proxy
   become: true
-  handlers:
-  - name: Reconfigure Squid
-    shell: /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
-  - name: Generate Squid SSL database
-    become_user: squid
-    shell: /usr/lib64/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB
   vars:
     allowed_urls:
     - ".{{ cluster_name }}.{{ cluster_domain }}"
     squid_cert_dir: /etc/squid/ssl
+  handlers:
+
+  - name: Reconfigure Squid
+    shell: /usr/sbin/squid -k parse && /usr/sbin/squid -k reconfigure
+
+  - name: Generate Squid SSL database
+    become_user: squid
+    shell: /usr/lib64/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB
+
   tasks:
+
   - name: Install Squid and IPTables
     package:
       name:
@@ -89,11 +157,13 @@
       - iptables
       state: installed
     notify: Generate Squid SSL database
+
   - name: Ensure Squid is running and enabled
     systemd:
       name: squid
       state: started
       enabled: yes
+
   - name: Redirect ports for incoming squid connections
     iptables:
       table: nat
@@ -109,18 +179,22 @@
       to: 3129
     - from: 443
       to: 3130
+
   - name: Enable routing
     ansible.posix.sysctl:
       name: net.ipv4.ip_forward
       value: '1'
+
   - name: Ensure squid cert directory exists
     file:
       path: '{{ squid_cert_dir }}'
       state: directory
+
   - name: Drop certificates for use by squid
     copy:
       content: '{{ hostvars.controller.fullchain.stdout }}'
       dest: '{{ squid_cert_dir }}/squid.pem'
+
   - name: Template squid configuration
     template:
       src: '{{ item }}.j2'

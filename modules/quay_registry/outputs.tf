@@ -9,3 +9,14 @@ output "registry_instance" {
   sensitive   = true
   description = "Information about the registry instance."
 }
+
+output "s3_bucket" {
+  value = {
+    region     = aws_s3_bucket.registry.region
+    bucket     = aws_s3_bucket.registry.bucket
+    access_key = aws_iam_access_key.registry.id
+    secret_key = aws_iam_access_key.registry.secret
+  }
+  sensitive   = true
+  description = "The AWS S3 bucket and IAM credentials required to access it."
+}
