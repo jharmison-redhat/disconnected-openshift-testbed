@@ -1,0 +1,18 @@
+---
+- name: Update all packages
+  become: yes
+  dnf:
+    name: '*'
+    state: latest
+
+- name: Check if reboot is needed
+  become: yes
+  command: dnf needs-rebooting -r
+  failed_when: false
+  changed_when: false
+  register: needs_rebooting
+
+- name: Reboot {{ ansible_host }}
+  become: yes
+  reboot:
+  when: needs_rebooting.rc != 0

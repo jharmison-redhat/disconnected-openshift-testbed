@@ -12,39 +12,13 @@
 - name: Wait for connectivity to all terraformed hosts
   hosts: terraformed
   gather_facts: false
-  tasks:
-  - name: Confirm basic ansible connectivity
-    ping:
-  - name: Confirm connectivity with all hosts
-    run_once: true
-    assert:
-      that:
-      - ansible_play_hosts == ansible_play_hosts_all
-  - name: Wait for cloud-init to complete
-    stat:
-      path: /var/lib/cloud/instance/boot-finished
-    ignore_unreachable: true
-    register: boot_finished
-    until: boot_finished.stat.exists
-    retries: 60
-    delay: 10
-  - name: Validate basic ansible connectivity after cloud-init
-    ping:
-    ignore_unreachable: true
-    retries: 6
-    delay: 10
-  - name: Validate that cloud-init completed
-    stat:
-      path: /var/lib/cloud/instance/boot-finished
-    register: boot_finished
-    until: boot_finished.stat.exists
-    retries: 1
-    delay: 10
-  - name: Validate connectivity with all hosts remains
-    run_once: true
-    assert:
-      that:
-      - ansible_play_hosts == ansible_play_hosts_all
+  roles:
+  - role: cloud_init_finished
+
+- name: Update all connected terraformed hosts
+  hosts: connected
+  roles:
+  - role: updated
 
 - name: Configure Red Hat Quay
   hosts: registry
@@ -72,35 +46,16 @@
   roles:
   - role: proxy
 
-- name: Configure bastion to trust Squid
+- name: Validate bastion configuration
   hosts: bastion
   become: true
-  vars:
-    cert_directory: '{{ playbook_dir }}/output'
+  roles:
+  - role: updated
   tasks:
-  - name: Place CA certificate in anchors
-    copy:
-      src: '{{ cert_directory }}/squid.crt'
-      dest: /etc/pki/ca-trust/source/anchors/
-    register: anchors
-  - name: Update CA trust
-    command: update-ca-trust
-    when: anchors.changed
-  - name: Update packages
-    dnf:
-      name: '*'
-      state: latest
   - name: Install container-tools
     dnf:
       name: '@container-tools'
       state: installed
-  - name: Check if reboot is needed
-    command: dnf needs-rebooting -r
-    failed_when: false
-    register: needs_rebooting
-  - name: Reboot node
-    reboot:
-    when: needs_rebooting.rc != 0
   - name: Login to quay registry to validate connection
     containers.podman.podman_login:
       username: '{{ registry_admin.username }}'
