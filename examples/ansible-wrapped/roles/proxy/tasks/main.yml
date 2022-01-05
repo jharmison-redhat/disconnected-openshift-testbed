@@ -4,6 +4,7 @@
     name:
     - squid
     - iptables
+    - iptables-services
     state: installed
   notify: Generate Squid SSL database
 
@@ -24,11 +25,22 @@
     jump: REDIRECT
     to_ports: '{{ item.to }}'
     comment: Squid redirect
+  register: iptables_rules
   loop:
   - from: 80
     to: 3129
   - from: 443
     to: 3130
+
+- name: Ensure iptables services are running and enabled
+  systemd:
+    name: iptables
+    state: started
+    enabled: true
+
+- name: Save iptables rules
+  command: service iptables save
+  when: iptables_rules.changed
 
 - name: Enable routing
   ansible.posix.sysctl:
