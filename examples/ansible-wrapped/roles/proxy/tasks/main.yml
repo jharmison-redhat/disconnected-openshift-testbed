@@ -8,12 +8,11 @@
     state: installed
   notify: Generate Squid SSL database
 
-- name: Ensure Squid is running and enabled
+- name: Ensure Squid is enabled
   systemd:
     name: squid
-    state: started
     enabled: true
-  ignore_errors: true
+  notify: Start Squid
 
 - name: Redirect ports for incoming squid connections
   iptables:
