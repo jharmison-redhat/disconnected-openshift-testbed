@@ -14,6 +14,12 @@
     enabled: true
   notify: Start Squid
 
+- name: Ensure iptables services are running and enabled
+  systemd:
+    name: iptables
+    state: started
+    enabled: true
+
 - name: Redirect ports for incoming squid connections
   iptables:
     table: nat
@@ -31,11 +37,15 @@
   - from: 443
     to: 3130
 
-- name: Ensure iptables services are running and enabled
-  systemd:
-    name: iptables
-    state: started
-    enabled: true
+- name: Remove any REJECT rules for forwarding or input
+  iptables:
+    chain: '{{ item }}'
+    jump: REJECT
+    reject_with: icmp-host-prohibited
+    state: absent
+  loop:
+  - FORWARD
+  - INPUT
 
 - name: Save iptables rules
   command: service iptables save

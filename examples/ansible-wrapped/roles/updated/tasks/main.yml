@@ -4,10 +4,11 @@
   dnf:
     name: '*'
     state: latest
+  when: '{{ hostvars.controller.terraform.changed }}'
 
 - name: Check if reboot is needed
   become: true
-  command: dnf needs-rebooting -r
+  command: dnf needs-restarting -r
   failed_when: false
   changed_when: false
   register: needs_rebooting
