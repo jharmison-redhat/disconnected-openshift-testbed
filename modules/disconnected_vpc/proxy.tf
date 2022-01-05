@@ -31,7 +31,7 @@ resource "aws_instance" "proxy" {
   }
 
   user_data = templatefile(
-    "${path.module}/squid.sh.tftpl", {
+    "${path.module}/setup.sh.tftpl", {
       hostname          = "${var.proxy_hostname}.${var.domain}"
       ec2_user_password = var.instance_password
     }

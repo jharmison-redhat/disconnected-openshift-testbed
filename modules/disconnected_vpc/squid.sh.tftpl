@@ -1,9 +1,0 @@
-#!/bin/bash
-
-hostnamectl set-hostname ${hostname}
-
-dnf -y update
-%{ if ec2_user_password != "" }
-echo '${ec2_user_password}' | passwd --stdin ec2-user
-%{ endif }
-dnf needs-restarting -r || reboot now

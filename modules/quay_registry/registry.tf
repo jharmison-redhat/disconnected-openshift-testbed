@@ -90,9 +90,9 @@ resource "aws_instance" "registry" {
   }
 
   user_data = templatefile(
-    "${path.module}/quay.sh.tftpl", {
+    "${path.module}/setup.sh.tftpl", {
+      hostname          = "${var.hostname}.${var.domain}"
       ec2_user_password = var.instance_password
-      registry_hostname = "${var.hostname}.${var.domain}"
     }
   )
 }
