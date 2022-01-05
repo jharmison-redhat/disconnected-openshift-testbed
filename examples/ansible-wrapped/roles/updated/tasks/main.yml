@@ -12,7 +12,7 @@
   changed_when: false
   register: needs_rebooting
 
-- name: Reboot {{ ansible_host }}
+- name: Reboot if necessary
   become: true
   reboot:
   when: needs_rebooting.rc != 0
