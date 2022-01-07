@@ -75,7 +75,16 @@
     privatekey_path: '{{ cert_directory }}/squid.key'
     country_name: '{{ cert_country|default("US") }}'
     organization_name: squid
+    email_address: '{{ registry_admin.email }}'
     common_name: squid
+    basic_constraints:
+    - CA:TRUE
+    key_usage:
+    - digitalSignature
+    - keyEncipherment
+    - dataEncipherment
+    - keyAgreement
+    - keyCertSign
 
 - name: Generate self-signed certificate for proxy
   community.crypto.x509_certificate:

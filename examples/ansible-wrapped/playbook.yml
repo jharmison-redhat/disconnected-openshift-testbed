@@ -42,13 +42,22 @@
     ca_cert_and_key: '{{ hostvars.controller.ca.stdout }}'
     allowed_urls:
     - .{{ cluster_name }}.{{ cluster_domain }}
-    - rhui3.{{ aws_region }}.aws.ce.redhat.com
+    - .rhui3.{{ aws_region }}.aws.ce.redhat.com
   roles:
   - role: proxy
 
 - name: Validate bastion configuration
   hosts: bastion
   become: true
+  pre_tasks:
+  - name: Ensure proxy CA certificate is present in anchors
+    copy:
+      src: '{{ playbook_dir }}/output/squid.crt'
+      dest: /etc/pki/ca-trust/source/anchors/
+    register: ca_certificate
+  - name: Update CA trust
+    command: update-ca-trust
+    when: ca_certificate.changed
   roles:
   - role: updated
   tasks:

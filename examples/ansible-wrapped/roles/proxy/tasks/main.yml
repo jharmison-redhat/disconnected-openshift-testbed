@@ -66,8 +66,7 @@
     content: '{{ ca_cert_and_key }}'
     dest: '{{ squid_cert_and_key }}'
   notify:
-  - Reconfigure Squid
-  - Generate Squid SSL database
+  - Restart Squid
 
 - name: Template squid configuration
   template:
@@ -77,5 +76,4 @@
   - squid.conf
   - whitelist.txt
   notify:
-  - Restart Squid
   - Reconfigure Squid
