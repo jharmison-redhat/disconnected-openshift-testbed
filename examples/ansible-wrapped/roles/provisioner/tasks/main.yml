@@ -97,3 +97,28 @@
   command: cat {{ cert_directory }}/squid.key {{ cert_directory }}/squid.crt
   changed_when: false
   register: ca
+
+- name: Generate private key for registry
+  community.crypto.openssl_privatekey:
+    path: '{{ cert_directory }}/registry.key'
+
+- name: Generate CSR for registry to be signed by proxy CA
+  community.crypto.openssl_csr:
+    path: '{{ cert_directory }}/registry.csr'
+    privatekey_path: '{{ cert_directory }}/registry.key'
+    country_name: '{{ cert_country|default("US") }}'
+    organization_name: Quay
+    email_address: '{{ registry_admin.email }}'
+    common_name: '{{ terraform.outputs.registry_instance.value.hostname }}'
+    subject_alt_name:
+    - DNS:{{ terraform.outputs.registry_instance.value.hostname }}
+    - IP:{{ terraform.outputs.registry_instance.value.public_ip }}
+
+- name: Generate Certificate for registry, signed by the CA
+  community.crypto.x509_certificate:
+    path: '{{ cert_directory }}/registry.crt'
+    csr_path: '{{ cert_directory }}/registry.csr'
+    privatekey_path: '{{ cert_directory }}/registry.key'
+    provider: ownca
+    ownca_path: '{{ cert_directory }}/squid.crt'
+    ownca_privatekey_path: '{{ cert_directory }}/squid.key'

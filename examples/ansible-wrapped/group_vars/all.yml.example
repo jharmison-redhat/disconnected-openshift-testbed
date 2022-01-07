@@ -8,4 +8,3 @@ registry_admin:
   username: james
   password: some other super secure password
   email: jharmison@redhat.com
-cert_style: letsencrypt

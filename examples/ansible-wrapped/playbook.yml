@@ -34,6 +34,9 @@
         s3_access_key: '{{ registry_bucket.access_key }}'
         s3_secret_key: '{{ registry_bucket.secret_key }}'
       password_dir: '{{ playbook_dir }}/output'
+      cert_style: byo
+      registry_certificate: '{{ lookup("file", playbook_dir+"/output/registry.crt") }}'
+      registry_certificate_key: '{{ lookup("file", playbook_dir+"/output/registry.key") }}'
 
 - name: Configure Squid
   hosts: proxy
@@ -59,7 +62,7 @@
     copy:
       content: '{{ hostvars.registry.selfsigned_certificate.certificate }}'
       dest: /etc/pki/ca-trust/source/anchors/registry.crt
-    when: hostvars.registry.cert_style == "selfsigned"
+    when: hostvars.registry.cert_style|default(None) == "selfsigned"
     register: registry_cert
   - name: Ensure any additional CAs are present in anchors
     copy:
