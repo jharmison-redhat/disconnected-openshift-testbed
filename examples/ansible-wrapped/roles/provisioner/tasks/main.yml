@@ -112,7 +112,7 @@
     common_name: '{{ terraform.outputs.registry_instance.value.hostname }}'
     subject_alt_name:
     - DNS:{{ terraform.outputs.registry_instance.value.hostname }}
-    - IP:{{ terraform.outputs.registry_instance.value.public_ip }}
+    - IP:{{ terraform.outputs.registry_instance.value.ip }}
 
 - name: Generate Certificate for registry, signed by the CA
   community.crypto.x509_certificate:
