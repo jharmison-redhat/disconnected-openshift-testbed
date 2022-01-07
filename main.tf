@@ -23,6 +23,8 @@ data "aws_ami" "rhel" {
   }
 }
 
+data "aws_region" "current" {}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -37,27 +39,25 @@ resource "aws_key_pair" "ec2_key" {
 }
 
 module "vpc" {
-  source                  = "./modules/disconnected_vpc"
-  availability_zones      = slice(data.aws_availability_zones.available.names, 1, 4)
-  proxy_ami               = data.aws_ami.rhel.id
-  proxy_flavor            = var.small_flavor
-  proxy_ssh_key           = aws_key_pair.ec2_key.key_name
-  proxy_instance_password = var.instance_password
-  allowed_urls            = concat([".${var.cluster_name}.${var.cluster_domain}"], var.extra_urls)
+  source             = "./modules/disconnected_vpc"
+  availability_zones = slice(data.aws_availability_zones.available.names, 0, 3)
+  ami_id             = data.aws_ami.rhel.id
+  proxy_flavor       = var.small_flavor
+  bastion_flavor     = var.large_flavor
+  ssh_key            = aws_key_pair.ec2_key.key_name
+  instance_password  = var.instance_password
+  domain             = "${var.cluster_name}.${var.cluster_domain}"
+  hosted_zone        = data.aws_route53_zone.public.id
 }
 
 module "registry" {
   source            = "./modules/quay_registry"
+  availability_zone = data.aws_availability_zones.available.names[0]
   ami_id            = data.aws_ami.rhel.id
-  subnet_id         = module.vpc.public_subnets[0]
-  availability_zone = data.aws_availability_zones.available.names[1]
   flavor            = var.large_flavor
   ssh_key_name      = aws_key_pair.ec2_key.key_name
+  instance_password = var.instance_password
   domain            = "${var.cluster_name}.${var.cluster_domain}"
   hosted_zone       = data.aws_route53_zone.public.id
-  instance_password = var.instance_password
-  redhat_username   = var.redhat_username
-  redhat_password   = var.redhat_password
-  registry_admin    = var.registry_admin
-  cert_style        = var.cert_style
+  subnet_id         = module.vpc.public_subnets[0]
 }

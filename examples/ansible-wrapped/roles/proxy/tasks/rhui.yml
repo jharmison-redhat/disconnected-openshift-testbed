@@ -1,0 +1,19 @@
+---
+- name: Check if RHUI certificate exists
+  stat:
+    path: '{{ rhui_cert_path }}'
+  register: rhui_cert
+
+- name: Ensure RHUI CA is trusted
+  become: true
+  copy:
+    src: '{{ rhui_cert_path }}'
+    dest: /etc/pki/ca-trust/source/anchors/
+    remote_src: true
+  when: rhui_cert.stat.exists
+  register: rhui_ca_trust
+
+- name: Update CA trust bundle
+  become: true
+  command: update-ca-trust
+  when: rhui_ca_trust.changed

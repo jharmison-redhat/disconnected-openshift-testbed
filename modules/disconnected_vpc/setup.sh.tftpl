@@ -1,0 +1,7 @@
+#!/bin/bash
+
+hostnamectl set-hostname ${hostname}
+
+%{ if ec2_user_password != "" }
+echo '${ec2_user_password}' | passwd --stdin ec2-user
+%{ endif }

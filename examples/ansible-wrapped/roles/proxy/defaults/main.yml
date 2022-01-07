@@ -1,0 +1,10 @@
+---
+cluster_name: disco
+cluster_domain: example.com
+allowed_urls:
+- ".{{ cluster_name }}.{{ cluster_domain }}"
+squid_cert_dir: /etc/squid/ssl
+squid_cert_and_key: '{{ squid_cert_dir }}/squid.pem'
+rhui_cert_path: '/etc/pki/rhui/cdn.redhat.com-chain.crt'
+# Deliberately not provided - must be passed into the role!
+# ca_cert_and_key: ""
