@@ -6,6 +6,6 @@ TODO
 - [x] Security group for Quay
 - [x] Quay installation via Ansible worked out
 - [x] Bastion host creation on disconnected VPC
-- [ ] Validate connectivity between bastion and Quay
+- [x] Validate connectivity between bastion and Quay
 - [ ] Automate quay organization creation
 - [ ] Validate oc-mirror workflows e2e
