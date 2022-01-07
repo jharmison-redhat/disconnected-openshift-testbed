@@ -1,4 +1,7 @@
 ---
+- name: Ensure RHUI is trusted for squid proxying
+  include_tasks: rhui.yml
+
 - name: Install Squid and IPTables
   package:
     name:
