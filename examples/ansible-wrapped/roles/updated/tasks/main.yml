@@ -4,7 +4,6 @@
   dnf:
     name: '*'
     state: latest
-  when: hostvars.controller.terraform.changed
 
 - name: Check if reboot is needed
   become: true
