@@ -10,7 +10,7 @@
     src: '{{ rhui_cert_path }}'
     dest: /etc/pki/ca-trust/source/anchors/
     remote_src: true
-  when: rhui_cert_path.stat.exists
+  when: rhui_cert.stat.exists
   register: rhui_ca_trust
 
 - name: Update CA trust bundle
