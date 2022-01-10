@@ -1,8 +1,0 @@
----
-collections:
-  - ansible.posix
-  - containers.podman
-  - community.crypto
-  - community.general
-roles:
-  - jharmison_redhat.redhat_quay

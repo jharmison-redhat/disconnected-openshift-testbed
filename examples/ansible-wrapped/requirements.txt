@@ -1,3 +1,0 @@
-jmespath
-cryptography
-ansible
