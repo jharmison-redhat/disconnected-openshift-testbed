@@ -1,0 +1,9 @@
+formatter: markdown table
+
+output:
+  file: ../../README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_REGISTRY_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_REGISTRY_TF_DOCS -->

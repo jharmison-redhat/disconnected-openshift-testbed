@@ -1,0 +1,17 @@
+formatter: markdown table
+
+recursive:
+  enabled: true
+
+settings:
+  read-comments: true
+  indent: 3
+  description: true
+
+output:
+  file: ./README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_ROOT_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_ROOT_TF_DOCS -->
