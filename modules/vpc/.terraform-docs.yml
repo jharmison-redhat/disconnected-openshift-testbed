@@ -1,0 +1,9 @@
+formatter: markdown table
+
+output:
+  file: ../../README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_VPC_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_VPC_TF_DOCS -->
