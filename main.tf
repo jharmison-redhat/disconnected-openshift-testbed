@@ -48,7 +48,9 @@ module "vpc" {
   availability_zones = slice(data.aws_availability_zones.available.names, 0, 3)
   ami_id             = data.aws_ami.rhel.id
   proxy_flavor       = var.small_flavor
+  proxy_disk_gb      = var.proxy_disk_gb
   bastion_flavor     = var.large_flavor
+  bastion_disk_gb    = var.proxy_disk_gb
   ssh_key            = aws_key_pair.ec2_key.key_name
   instance_password  = var.instance_password
   domain             = "${var.cluster_name}.${var.cluster_domain}"
@@ -66,4 +68,5 @@ module "registry" {
   domain            = "${var.cluster_name}.${var.cluster_domain}"
   hosted_zone       = data.aws_route53_zone.public.id
   subnet_id         = module.vpc.public_subnets[0]
+  disk_gb           = var.registry_disk_gb
 }

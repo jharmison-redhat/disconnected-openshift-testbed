@@ -51,3 +51,9 @@ variable "hosted_zone" {
   type        = string
   description = "The Route53 Hosted Zone ID which contains the domain for creating registry records."
 }
+
+variable "disk_gb" {
+  type        = number
+  description = "The size of the disk, in GB, for the registry instance. Since the registry instance is expected to use S3 storage, can be small."
+  default     = 20
+}

@@ -103,11 +103,14 @@ Some more robust examples, including parametrized ones with outputs, are availab
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami_type"></a> [ami\_type](#input\_ami\_type) | The AMI type to use, Access2 or Hourly. Availability may depend on your AWS account being linked with Red Hat Cloud Access. | `string` | `"Hourly"` | no |
+| <a name="input_bastion_disk_gb"></a> [bastion\_disk\_gb](#input\_bastion\_disk\_gb) | The size of the disk, in GB, for the bastion instance. Expected to be large, to support sneakernetting of content. | `number` | `500` | no |
 | <a name="input_cluster_domain"></a> [cluster\_domain](#input\_cluster\_domain) | The name of the domain under which your OpenShift cluster will reside (Note that this needs to be a Hosted Zone managed in Route53). | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name you will be giving your OpenShift cluster in metadata.name in install-config.yaml (Note that all resources created are scoped under this subdomain). | `string` | n/a | yes |
 | <a name="input_instance_password"></a> [instance\_password](#input\_instance\_password) | The password to set for the ec2-user on created instances. | `string` | `""` | no |
 | <a name="input_large_flavor"></a> [large\_flavor](#input\_large\_flavor) | The AWS flavor to use for the larger instance (registry, bastion). | `string` | `"t3.large"` | no |
+| <a name="input_proxy_disk_gb"></a> [proxy\_disk\_gb](#input\_proxy\_disk\_gb) | The size of the disk, in GB, for the proxy instance. | `number` | `20` | no |
 | <a name="input_public_key"></a> [public\_key](#input\_public\_key) | The SSH public key string to use for the instances. | `string` | n/a | yes |
+| <a name="input_registry_disk_gb"></a> [registry\_disk\_gb](#input\_registry\_disk\_gb) | The size of the disk, in GB, for the registry instance. Since the registry instance is expected to use S3 storage, can be small. | `number` | `20` | no |
 | <a name="input_rhel_version"></a> [rhel\_version](#input\_rhel\_version) | The major version of RHEL to use for the AMI selection. | `string` | `"8"` | no |
 | <a name="input_small_flavor"></a> [small\_flavor](#input\_small\_flavor) | The AWS flavor to use for smaller instance (proxy). | `string` | `"t3.small"` | no |
 
@@ -166,11 +169,13 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami_id"></a> [ami\_id](#input\_ami\_id) | The AMI to use for the proxy and bastion instances. | `string` | n/a | yes |
 | <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | The availability zones to create subnets for. | `list(string)` | n/a | yes |
+| <a name="input_bastion_disk_gb"></a> [bastion\_disk\_gb](#input\_bastion\_disk\_gb) | The size of the disk, in GB, for the bastion instance. Expected to be large, to support sneakernetting of content. | `number` | `500` | no |
 | <a name="input_bastion_flavor"></a> [bastion\_flavor](#input\_bastion\_flavor) | The instance type to use for the isolated bastion host. | `string` | `"t3.small"` | no |
 | <a name="input_bastion_hostname"></a> [bastion\_hostname](#input\_bastion\_hostname) | The hostname to use when building the bastion instance. | `string` | `"bastion"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the proxy. | `string` | n/a | yes |
 | <a name="input_hosted_zone"></a> [hosted\_zone](#input\_hosted\_zone) | The Route53 Hosted Zone ID which contains the domain for creating proxy records. | `string` | n/a | yes |
 | <a name="input_instance_password"></a> [instance\_password](#input\_instance\_password) | The password to set for the ec2-user on the proxy and bastion instances. | `string` | `""` | no |
+| <a name="input_proxy_disk_gb"></a> [proxy\_disk\_gb](#input\_proxy\_disk\_gb) | The size of the disk, in GB, for the proxy instance. | `number` | `20` | no |
 | <a name="input_proxy_flavor"></a> [proxy\_flavor](#input\_proxy\_flavor) | The instance type to use for the proxy instance. | `string` | `"t3.small"` | no |
 | <a name="input_proxy_hostname"></a> [proxy\_hostname](#input\_proxy\_hostname) | The hostname to use when building the proxy instance and creating Route 53 records for it. | `string` | `"proxy"` | no |
 | <a name="input_ssh_key"></a> [ssh\_key](#input\_ssh\_key) | The SSH public key to use for the proxy and bastion instances - must already exist as an aws\_key\_pair! | `string` | n/a | yes |
@@ -229,6 +234,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami_id"></a> [ami\_id](#input\_ami\_id) | The ID of the AMI that should be used for the registry. | `string` | n/a | yes |
 | <a name="input_availability_zone"></a> [availability\_zone](#input\_availability\_zone) | The availability zone into which the registry instance should be placed - should align with the subnet's zone. | `string` | n/a | yes |
+| <a name="input_disk_gb"></a> [disk\_gb](#input\_disk\_gb) | The size of the disk, in GB, for the registry instance. Since the registry instance is expected to use S3 storage, can be small. | `number` | `20` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the registry. | `string` | n/a | yes |
 | <a name="input_flavor"></a> [flavor](#input\_flavor) | The instance type to use for the registry instance. | `string` | `"t3.large"` | no |
 | <a name="input_hosted_zone"></a> [hosted\_zone](#input\_hosted\_zone) | The Route53 Hosted Zone ID which contains the domain for creating registry records. | `string` | n/a | yes |

@@ -64,3 +64,15 @@ variable "hosted_zone" {
   type        = string
   description = "The Route53 Hosted Zone ID which contains the domain for creating proxy records."
 }
+
+variable "proxy_disk_gb" {
+  type        = number
+  description = "The size of the disk, in GB, for the proxy instance."
+  default     = 20
+}
+
+variable "bastion_disk_gb" {
+  type        = number
+  description = "The size of the disk, in GB, for the bastion instance. Expected to be large, to support sneakernetting of content."
+  default     = 500
+}

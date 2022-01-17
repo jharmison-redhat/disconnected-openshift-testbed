@@ -53,3 +53,21 @@ variable "cluster_domain" {
   type        = string
   description = "The name of the domain under which your OpenShift cluster will reside (Note that this needs to be a Hosted Zone managed in Route53)."
 }
+
+variable "registry_disk_gb" {
+  type        = number
+  description = "The size of the disk, in GB, for the registry instance. Since the registry instance is expected to use S3 storage, can be small."
+  default     = 20
+}
+
+variable "proxy_disk_gb" {
+  type        = number
+  description = "The size of the disk, in GB, for the proxy instance."
+  default     = 20
+}
+
+variable "bastion_disk_gb" {
+  type        = number
+  description = "The size of the disk, in GB, for the bastion instance. Expected to be large, to support sneakernetting of content."
+  default     = 500
+}

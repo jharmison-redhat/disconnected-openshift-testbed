@@ -36,6 +36,7 @@ module "testbed" {
   cluster_name      = "${var.cluster_name}_${random_string.name_suffix.result}"
   cluster_domain    = var.cluster_domain
   instance_password = random_password.instance_password.result
+  registry_disk_gb  = var.registry_disk_gb
 }
 
 provider "aws" {
