@@ -39,6 +39,8 @@ An S3 bucket and IAM credentials to use it (read/write) are created:
 
 - These are designed for use by the registry
 
+And finally, a set of IAM credentials which are adequate to install OpenShift are created.
+
 ### Example usage
 
 Reference the module from your own terraform, with an initialized AWS provider. An example terraform file might look like this:
@@ -85,6 +87,7 @@ Some more robust examples, including parametrized ones with outputs, are availab
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_ocp_installer"></a> [ocp\_installer](#module\_ocp\_installer) | ./modules/ocp_installer | n/a |
 | <a name="module_registry"></a> [registry](#module\_registry) | ./modules/registry | n/a |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | ./modules/vpc | n/a |
 
@@ -119,6 +122,7 @@ Some more robust examples, including parametrized ones with outputs, are availab
 | Name | Description |
 |------|-------------|
 | <a name="output_bastion_instance"></a> [bastion\_instance](#output\_bastion\_instance) | Information about the bastion instance. |
+| <a name="output_ocp_installer"></a> [ocp\_installer](#output\_ocp\_installer) | The IAM Access Key ID and Secret for the OpenShift installation user. |
 | <a name="output_proxy_instance"></a> [proxy\_instance](#output\_proxy\_instance) | Information about the proxy instance. |
 | <a name="output_registry_bucket"></a> [registry\_bucket](#output\_registry\_bucket) | The AWS S3 bucket for the registry and IAM credentials required to access it. |
 | <a name="output_registry_instance"></a> [registry\_instance](#output\_registry\_instance) | Information about the registry instance. |
@@ -250,3 +254,42 @@ No modules.
 | <a name="output_registry_instance"></a> [registry\_instance](#output\_registry\_instance) | Information about the registry instance. |
 | <a name="output_s3_bucket"></a> [s3\_bucket](#output\_s3\_bucket) | The AWS S3 bucket and IAM credentials required to access it. |
 <!-- END_REGISTRY_TF_DOCS -->
+
+## OCP Installer Submodule Documentation
+
+<!-- BEGIN_INSTALLER_TF_DOCS -->
+### Requirements
+
+No requirements.
+
+### Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.72.0 |
+
+### Modules
+
+No modules.
+
+### Resources
+
+| Name | Type |
+|------|------|
+| [aws_iam_access_key.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key) | resource |
+| [aws_iam_policy.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_user.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user) | resource |
+| [aws_iam_user_policy_attachment.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_policy_attachment) | resource |
+
+### Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_domain"></a> [domain](#input\_domain) | The full name of the domain which will be used to uniquely identify the IAM user created for OpenShift installation. | `string` | n/a | yes |
+
+### Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_ocp_installer"></a> [ocp\_installer](#output\_ocp\_installer) | The IAM Access Key ID and Secret for the OpenShift installation user. |
+<!-- END_INSTALLER_TF_DOCS -->

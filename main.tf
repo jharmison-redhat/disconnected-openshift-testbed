@@ -70,3 +70,9 @@ module "registry" {
   subnet_id         = module.vpc.public_subnets[0].id
   disk_gb           = var.registry_disk_gb
 }
+
+# This submodule creates an IAM user with the permissions necessary to install an OpenShift cluster
+module "ocp_installer" {
+  source = "./modules/ocp_installer"
+  domain = "${var.cluster_name}.${var.cluster_domain}"
+}

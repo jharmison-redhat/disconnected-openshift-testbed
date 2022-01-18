@@ -31,3 +31,9 @@ output "registry_bucket" {
   sensitive   = true
   description = "The AWS S3 bucket for the registry and IAM credentials required to access it."
 }
+
+output "ocp_installer" {
+  value       = module.ocp_installer.ocp_installer
+  sensitive   = true
+  description = "The IAM Access Key ID and Secret for the OpenShift installation user."
+}
