@@ -186,9 +186,9 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_bastion_instance"></a> [bastion\_instance](#output\_bastion\_instance) | Information about the bastion instance. |
-| <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | The IDs of the subnets that route through the proxy. |
+| <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | Details about the subnets that are isolated by routing through the proxy. |
 | <a name="output_proxy_instance"></a> [proxy\_instance](#output\_proxy\_instance) | Information about the proxy instance. |
-| <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | The IDs of the subnets that route through the IGW. |
+| <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | Details about the subnets that route through the IGW to the public internet. |
 <!-- END_VPC_TF_DOCS -->
 
 ## Registry Submodule Documentation

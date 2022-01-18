@@ -67,6 +67,6 @@ module "registry" {
   instance_password = var.instance_password
   domain            = "${var.cluster_name}.${var.cluster_domain}"
   hosted_zone       = data.aws_route53_zone.public.id
-  subnet_id         = module.vpc.public_subnets[0]
+  subnet_id         = module.vpc.public_subnets[0].id
   disk_gb           = var.registry_disk_gb
 }
