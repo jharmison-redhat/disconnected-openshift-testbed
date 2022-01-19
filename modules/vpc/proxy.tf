@@ -32,13 +32,13 @@ resource "aws_instance" "proxy" {
 
   user_data = templatefile(
     "${path.module}/setup.sh.tftpl", {
-      hostname          = "${var.proxy_hostname}.${var.domain}"
+      hostname          = "${var.proxy_hostname}.${var.cluster_name}.${var.cluster_domain}"
       ec2_user_password = var.instance_password
     }
   )
 
   tags = {
-    Name = "proxy.${var.domain}"
+    Name = "proxy.${var.cluster_name}.${var.cluster_domain}"
     Role = "proxy"
   }
 }
@@ -77,9 +77,18 @@ resource "aws_eip" "proxy" {
 
 resource "aws_route53_record" "proxy" {
   zone_id         = var.hosted_zone
-  name            = "${var.proxy_hostname}.${var.domain}"
+  name            = "${var.proxy_hostname}.${var.cluster_name}.${var.cluster_domain}"
   type            = "A"
   ttl             = "300"
   records         = [aws_eip.proxy.public_ip]
+  allow_overwrite = true
+}
+
+resource "aws_route53_record" "proxy_private" {
+  zone_id         = aws_route53_zone.private.id
+  name            = "${var.proxy_hostname}.${var.cluster_name}.${var.cluster_domain}"
+  type            = "A"
+  ttl             = "300"
+  records         = [aws_instance.proxy.private_ip]
   allow_overwrite = true
 }

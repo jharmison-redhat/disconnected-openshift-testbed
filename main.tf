@@ -53,7 +53,8 @@ module "vpc" {
   bastion_disk_gb    = var.proxy_disk_gb
   ssh_key            = aws_key_pair.ec2_key.key_name
   instance_password  = var.instance_password
-  domain             = "${var.cluster_name}.${var.cluster_domain}"
+  cluster_name       = var.cluster_name
+  cluster_domain     = var.cluster_domain
   hosted_zone        = data.aws_route53_zone.public.id
 }
 
@@ -65,8 +66,10 @@ module "registry" {
   flavor            = var.large_flavor
   ssh_key_name      = aws_key_pair.ec2_key.key_name
   instance_password = var.instance_password
-  domain            = "${var.cluster_name}.${var.cluster_domain}"
-  hosted_zone       = data.aws_route53_zone.public.id
+  cluster_name      = var.cluster_name
+  cluster_domain    = var.cluster_domain
+  public_zone       = data.aws_route53_zone.public.id
+  private_zone      = module.vpc.private_zone
   subnet_id         = module.vpc.public_subnets[0].id
   disk_gb           = var.registry_disk_gb
 }

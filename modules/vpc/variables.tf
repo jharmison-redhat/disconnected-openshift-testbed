@@ -43,9 +43,14 @@ variable "instance_password" {
   default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
 
-variable "domain" {
+variable "cluster_name" {
   type        = string
-  description = "The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the proxy."
+  description = "The name you will be giving your OpenShift cluster in metadata.name in install-config.yaml. A new private HostedZone will be created for this as a subdomain of the cluster_domain."
+}
+
+variable "cluster_domain" {
+  type        = string
+  description = "The name of the domain under which your OpenShift cluster will reside (Note that this needs to be a Hosted Zone managed in Route53)."
 }
 
 variable "proxy_hostname" {
@@ -62,7 +67,7 @@ variable "bastion_hostname" {
 
 variable "hosted_zone" {
   type        = string
-  description = "The Route53 Hosted Zone ID which contains the domain for creating proxy records."
+  description = "The Route53 Hosted Zone ID for the the cluster_domain, for creating public proxy records."
 }
 
 variable "proxy_disk_gb" {

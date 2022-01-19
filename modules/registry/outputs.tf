@@ -1,6 +1,6 @@
 output "registry_instance" {
   value = {
-    hostname   = "${var.hostname}.${var.domain}"
+    hostname   = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
     ip         = aws_eip.registry.public_ip
     private_ip = aws_instance.registry.private_ip
     username   = "ec2-user"

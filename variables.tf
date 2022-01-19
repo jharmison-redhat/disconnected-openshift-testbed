@@ -46,7 +46,7 @@ variable "instance_password" {
 
 variable "cluster_name" {
   type        = string
-  description = "The name you will be giving your OpenShift cluster in metadata.name in install-config.yaml (Note that all resources created are scoped under this subdomain)."
+  description = "The name you will be giving your OpenShift cluster in metadata.name in install-config.yaml. A new private HostedZone will be created for this as a subdomain of the cluster_domain."
 }
 
 variable "cluster_domain" {

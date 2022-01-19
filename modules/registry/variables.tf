@@ -36,9 +36,14 @@ variable "instance_password" {
   default     = "" # Empty default means no password tfsec:ignore:GEN001
 }
 
-variable "domain" {
+variable "cluster_name" {
   type        = string
-  description = "The full name of the domain, which should be within one of your existing Route53 Hosted Zones, in which to create DNS records for the registry."
+  description = "The name you will be giving your OpenShift cluster in metadata.name in install-config.yaml. Will be used in the construction of DNS records for the registry in the public and private zones."
+}
+
+variable "cluster_domain" {
+  type        = string
+  description = "The name of the domain under which your OpenShift cluster will reside. Will be used in the construction of DNS records for the registry in the public and private zones."
 }
 
 variable "hostname" {
@@ -47,9 +52,14 @@ variable "hostname" {
   default     = "registry"
 }
 
-variable "hosted_zone" {
+variable "public_zone" {
   type        = string
-  description = "The Route53 Hosted Zone ID which contains the domain for creating registry records."
+  description = "The Route53 Hosted Zone ID which contains the domain for creating public registry records."
+}
+
+variable "private_zone" {
+  type        = string
+  description = "The Route53 Hosted Zone ID which contains the domain for creating private registry records."
 }
 
 variable "disk_gb" {

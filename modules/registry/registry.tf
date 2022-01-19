@@ -1,7 +1,7 @@
 # Exposing things to the internet is.... why we do this?
 #tfsec:ignore:aws-vpc-no-public-egress-sg tfsec:ignore:aws-vpc-no-public-ingress-sg
 resource "aws_security_group" "registry" {
-  name        = "${var.hostname}.${var.domain}"
+  name        = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
   description = "Allows inbound access for HTTP/S, in addition to SSH and inter-VPC traffic."
   vpc_id      = data.aws_vpc.disco.id
 
@@ -64,7 +64,7 @@ resource "aws_instance" "registry" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.registry.id]
   tags = {
-    Name = "${var.hostname}.${var.domain}"
+    Name = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
     Role = "registry"
   }
 
@@ -91,7 +91,7 @@ resource "aws_instance" "registry" {
 
   user_data = templatefile(
     "${path.module}/setup.sh.tftpl", {
-      hostname          = "${var.hostname}.${var.domain}"
+      hostname          = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
       ec2_user_password = var.instance_password
     }
   )
@@ -110,10 +110,19 @@ resource "aws_eip" "registry" {
 }
 
 resource "aws_route53_record" "registry" {
-  zone_id         = var.hosted_zone
-  name            = "${var.hostname}.${var.domain}"
+  zone_id         = var.public_zone
+  name            = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
   type            = "A"
   ttl             = "300"
   records         = [aws_eip.registry.public_ip]
+  allow_overwrite = true
+}
+
+resource "aws_route53_record" "registry_private" {
+  zone_id         = var.private_zone
+  name            = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
+  type            = "A"
+  ttl             = "300"
+  records         = [aws_instance.registry.private_ip]
   allow_overwrite = true
 }

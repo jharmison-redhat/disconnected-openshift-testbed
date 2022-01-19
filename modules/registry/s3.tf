@@ -6,7 +6,7 @@
 #tfsec:ignore:aws-s3-enable-bucket-encryption tfsec:ignore:aws-s3-enable-bucket-logging tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "registry" {
   force_destroy = true
-  bucket        = "${replace(var.domain, ".", "-")}-registry"
+  bucket        = "${var.cluster_name}-${var.cluster_domain}-registry"
   acl           = "private"
 }
 
@@ -20,7 +20,7 @@ resource "aws_s3_bucket_public_access_block" "registry" {
 }
 
 resource "aws_iam_policy" "registry" {
-  name = "${var.domain}-registry"
+  name = "${var.cluster_name}.${var.cluster_domain}-registry"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -56,7 +56,7 @@ resource "aws_iam_policy" "registry" {
 }
 
 resource "aws_iam_user" "registry" {
-  name = "${var.domain}-registry"
+  name = "${var.cluster_name}.${var.cluster_domain}-registry"
 }
 
 resource "aws_iam_user_policy_attachment" "registry" {

@@ -31,13 +31,22 @@ resource "aws_instance" "bastion" {
 
   user_data = templatefile(
     "${path.module}/setup.sh.tftpl", {
-      hostname          = "${var.bastion_hostname}.${var.domain}"
+      hostname          = "${var.bastion_hostname}.${var.cluster_name}.${var.cluster_domain}"
       ec2_user_password = var.instance_password
     }
   )
 
   tags = {
-    Name = "bastion.${var.domain}"
+    Name = "bastion.${var.cluster_name}.${var.cluster_domain}"
     Role = "bastion"
   }
+}
+
+resource "aws_route53_record" "bastion_private" {
+  zone_id         = aws_route53_zone.private.id
+  name            = "${var.bastion_hostname}.${var.cluster_name}.${var.cluster_domain}"
+  type            = "A"
+  ttl             = "300"
+  records         = [aws_instance.bastion.private_ip]
+  allow_overwrite = true
 }
