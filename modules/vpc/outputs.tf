@@ -10,11 +10,12 @@ output "public_subnets" {
 
 output "proxy_instance" {
   value = {
-    hostname   = "${var.proxy_hostname}.${var.cluster_name}.${var.cluster_domain}"
-    ip         = aws_eip.proxy.public_ip
-    private_ip = aws_instance.proxy.private_ip
-    username   = "ec2-user"
-    password   = var.instance_password
+    hostname         = "${var.proxy_hostname}.${var.cluster_name}.${var.cluster_domain}"
+    private_hostname = "${var.proxy_hostname}.${aws_route53_zone.private.name}"
+    ip               = aws_eip.proxy.public_ip
+    private_ip       = aws_instance.proxy.private_ip
+    username         = "ec2-user"
+    password         = var.instance_password
   }
   description = "Information about the proxy instance."
   sensitive   = true
@@ -22,10 +23,11 @@ output "proxy_instance" {
 
 output "bastion_instance" {
   value = {
-    hostname   = "${var.bastion_hostname}.${var.cluster_name}.${var.cluster_domain}"
-    private_ip = aws_instance.bastion.private_ip
-    username   = "ec2-user"
-    password   = var.instance_password
+    hostname         = "${var.bastion_hostname}.${var.cluster_name}.${var.cluster_domain}"
+    private_hostname = "${var.bastion_hostname}.${aws_route53_zone.private.name}"
+    private_ip       = aws_instance.bastion.private_ip
+    username         = "ec2-user"
+    password         = var.instance_password
   }
   description = "Information about the bastion instance."
   sensitive   = true
