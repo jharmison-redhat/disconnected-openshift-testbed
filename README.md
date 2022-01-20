@@ -123,6 +123,7 @@ Some more robust examples, including parametrized ones with outputs, are availab
 |------|-------------|
 | <a name="output_bastion_instance"></a> [bastion\_instance](#output\_bastion\_instance) | Information about the bastion instance. |
 | <a name="output_ocp_installer"></a> [ocp\_installer](#output\_ocp\_installer) | The IAM Access Key ID and Secret for the OpenShift installation user. |
+| <a name="output_private_dns_zone"></a> [private\_dns\_zone](#output\_private\_dns\_zone) | The DNS name of the new private DNS zone, internal to the VPC. |
 | <a name="output_proxy_instance"></a> [proxy\_instance](#output\_proxy\_instance) | Information about the proxy instance. |
 | <a name="output_registry_bucket"></a> [registry\_bucket](#output\_registry\_bucket) | The AWS S3 bucket for the registry and IAM credentials required to access it. |
 | <a name="output_registry_instance"></a> [registry\_instance](#output\_registry\_instance) | Information about the registry instance. |

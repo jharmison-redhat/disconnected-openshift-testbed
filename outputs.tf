@@ -37,3 +37,8 @@ output "ocp_installer" {
   sensitive   = true
   description = "The IAM Access Key ID and Secret for the OpenShift installation user."
 }
+
+output "private_dns_zone" {
+  value       = module.vpc.private_zone.name
+  description = "The DNS name of the new private DNS zone, internal to the VPC."
+}
