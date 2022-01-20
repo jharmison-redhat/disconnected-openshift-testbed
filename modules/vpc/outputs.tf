@@ -32,6 +32,6 @@ output "bastion_instance" {
 }
 
 output "private_zone" {
-  value       = aws_route53_zone.private.id
-  description = "The ID of the private Hosted Zone created for the VPC."
+  value       = aws_route53_zone.private
+  description = "The private Hosted Zone created for the VPC."
 }

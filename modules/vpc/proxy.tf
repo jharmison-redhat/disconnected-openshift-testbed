@@ -86,7 +86,7 @@ resource "aws_route53_record" "proxy" {
 
 resource "aws_route53_record" "proxy_private" {
   zone_id         = aws_route53_zone.private.id
-  name            = "${var.proxy_hostname}.${var.cluster_name}.${var.cluster_domain}"
+  name            = "${var.proxy_hostname}.${aws_route53_zone.private.name}"
   type            = "A"
   ttl             = "300"
   records         = [aws_instance.proxy.private_ip]

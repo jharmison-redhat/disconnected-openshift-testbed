@@ -57,7 +57,12 @@ variable "public_zone" {
   description = "The Route53 Hosted Zone ID which contains the domain for creating public registry records."
 }
 
-variable "private_zone" {
+variable "private_zone_name" {
+  type        = string
+  description = "The Route53 Hosted Zone name which contains the domain for creating private registry records."
+}
+
+variable "private_zone_id" {
   type        = string
   description = "The Route53 Hosted Zone ID which contains the domain for creating private registry records."
 }

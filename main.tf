@@ -69,7 +69,8 @@ module "registry" {
   cluster_name      = var.cluster_name
   cluster_domain    = var.cluster_domain
   public_zone       = data.aws_route53_zone.public.id
-  private_zone      = module.vpc.private_zone
+  private_zone_id   = module.vpc.private_zone.id
+  private_zone_name = module.vpc.private_zone.name
   subnet_id         = module.vpc.public_subnets[0].id
   disk_gb           = var.registry_disk_gb
 }

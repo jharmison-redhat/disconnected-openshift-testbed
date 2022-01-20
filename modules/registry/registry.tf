@@ -119,8 +119,8 @@ resource "aws_route53_record" "registry" {
 }
 
 resource "aws_route53_record" "registry_private" {
-  zone_id         = var.private_zone
-  name            = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
+  zone_id         = var.private_zone_id
+  name            = "${var.hostname}.${var.private_zone_name}"
   type            = "A"
   ttl             = "300"
   records         = [aws_instance.registry.private_ip]

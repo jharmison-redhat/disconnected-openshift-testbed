@@ -195,7 +195,7 @@ No modules.
 |------|-------------|
 | <a name="output_bastion_instance"></a> [bastion\_instance](#output\_bastion\_instance) | Information about the bastion instance. |
 | <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | Details about the subnets that are isolated by routing through the proxy. |
-| <a name="output_private_zone"></a> [private\_zone](#output\_private\_zone) | The ID of the private Hosted Zone created for the VPC. |
+| <a name="output_private_zone"></a> [private\_zone](#output\_private\_zone) | The private Hosted Zone created for the VPC. |
 | <a name="output_proxy_instance"></a> [proxy\_instance](#output\_proxy\_instance) | Information about the proxy instance. |
 | <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | Details about the subnets that route through the IGW to the public internet. |
 <!-- END_VPC_TF_DOCS -->
@@ -250,7 +250,8 @@ No modules.
 | <a name="input_flavor"></a> [flavor](#input\_flavor) | The instance type to use for the registry instance. | `string` | `"t3.large"` | no |
 | <a name="input_hostname"></a> [hostname](#input\_hostname) | The hostname to use when building the instance and creating Route 53 records for it. | `string` | `"registry"` | no |
 | <a name="input_instance_password"></a> [instance\_password](#input\_instance\_password) | The password to set for the ec2-user on the registry instance. | `string` | `""` | no |
-| <a name="input_private_zone"></a> [private\_zone](#input\_private\_zone) | The Route53 Hosted Zone ID which contains the domain for creating private registry records. | `string` | n/a | yes |
+| <a name="input_private_zone_id"></a> [private\_zone\_id](#input\_private\_zone\_id) | The Route53 Hosted Zone ID which contains the domain for creating private registry records. | `string` | n/a | yes |
+| <a name="input_private_zone_name"></a> [private\_zone\_name](#input\_private\_zone\_name) | The Route53 Hosted Zone name which contains the domain for creating private registry records. | `string` | n/a | yes |
 | <a name="input_public_zone"></a> [public\_zone](#input\_public\_zone) | The Route53 Hosted Zone ID which contains the domain for creating public registry records. | `string` | n/a | yes |
 | <a name="input_ssh_key_name"></a> [ssh\_key\_name](#input\_ssh\_key\_name) | The SSH public key to use for the proxy instance - must already exist as an aws\_key\_pair! | `string` | n/a | yes |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | The ID of the existing VPC subnet into which the instance should associate its default interface. | `string` | n/a | yes |

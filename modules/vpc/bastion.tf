@@ -44,7 +44,7 @@ resource "aws_instance" "bastion" {
 
 resource "aws_route53_record" "bastion_private" {
   zone_id         = aws_route53_zone.private.id
-  name            = "${var.bastion_hostname}.${var.cluster_name}.${var.cluster_domain}"
+  name            = "${var.bastion_hostname}.${aws_route53_zone.private.name}"
   type            = "A"
   ttl             = "300"
   records         = [aws_instance.bastion.private_ip]
