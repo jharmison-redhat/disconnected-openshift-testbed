@@ -50,7 +50,7 @@ module "vpc" {
   proxy_flavor       = var.small_flavor
   proxy_disk_gb      = var.proxy_disk_gb
   bastion_flavor     = var.large_flavor
-  bastion_disk_gb    = var.proxy_disk_gb
+  bastion_disk_gb    = var.bastion_disk_gb
   ssh_key            = aws_key_pair.ec2_key.key_name
   instance_password  = var.instance_password
   cluster_name       = var.cluster_name
