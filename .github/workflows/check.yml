@@ -19,7 +19,7 @@ jobs:
     - name: Init terraform
       run: terraform init
 
-    - uses: solacelost/action-tflint@feat/add-init
+    - uses: reviewdog/action-tflint@master
       name: Run tflint
       with:
         github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
