@@ -11,7 +11,6 @@ resource "aws_kms_key" "registry" {
 resource "aws_s3_bucket" "registry" {
   force_destroy = true
   bucket        = "${var.cluster_name}-${var.cluster_domain}-registry"
-  acl           = "private"
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
@@ -20,6 +19,11 @@ resource "aws_s3_bucket" "registry" {
       }
     }
   }
+}
+
+resource "aws_s3_bucket_acl" "registry" {
+  bucket = aws_s3_bucket.registry.id
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_public_access_block" "registry" {
