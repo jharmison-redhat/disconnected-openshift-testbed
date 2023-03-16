@@ -12,6 +12,7 @@ resource "aws_instance" "proxy" {
   root_block_device {
     volume_type           = "gp2"
     volume_size           = var.proxy_disk_gb
+    encrypted             = true
     delete_on_termination = true
   }
 

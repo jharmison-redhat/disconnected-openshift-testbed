@@ -1,3 +1,7 @@
+resource "aws_kms_key" "registry" {
+  enable_key_rotation = true
+}
+
 # - We're heavily restricting access to this bucket, and encrypting it will
 #   only slow it down and make configuration more complex
 # - Logging is unnecessarily complex for this simple environment
@@ -8,6 +12,14 @@ resource "aws_s3_bucket" "registry" {
   force_destroy = true
   bucket        = "${var.cluster_name}-${var.cluster_domain}-registry"
   acl           = "private"
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = aws_kms_key.registry.arn
+        sse_algorithm     = "aws:kms"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "registry" {
@@ -19,6 +31,8 @@ resource "aws_s3_bucket_public_access_block" "registry" {
   restrict_public_buckets = true
 }
 
+# - We are deliberately creating a very privileged policy
+#tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_policy" "registry" {
   name = "${var.cluster_name}.${var.cluster_domain}-registry"
   policy = jsonencode({
@@ -55,6 +69,8 @@ resource "aws_iam_policy" "registry" {
   })
 }
 
+# - This is deliberate
+#tfsec:ignore:aws-iam-no-user-attached-policies
 resource "aws_iam_user" "registry" {
   name = "${var.cluster_name}.${var.cluster_domain}-registry"
 }

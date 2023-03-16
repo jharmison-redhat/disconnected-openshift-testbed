@@ -1,5 +1,5 @@
 # Exposing things to the internet is.... why we do this?
-#tfsec:ignore:aws-vpc-no-public-egress-sg tfsec:ignore:aws-vpc-no-public-ingress-sg
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "registry" {
   name        = "${var.hostname}.${var.cluster_name}.${var.cluster_domain}"
   description = "Allows inbound access for HTTP/S, in addition to SSH and inter-VPC traffic."
@@ -71,6 +71,7 @@ resource "aws_instance" "registry" {
   root_block_device {
     volume_type           = "gp2"
     volume_size           = var.disk_gb
+    encrypted             = true
     delete_on_termination = true
   }
 

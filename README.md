@@ -8,8 +8,8 @@ For an example of this Terraform module's intended use cases, including more rob
 
 ### Environment Prerequisites
 
-- Terraform >= 0.14.0
-- An AWS profile defined in `~/.aws/credentials` or IAM credentials exported
+- Terraform >= 1.4.2
+- An AWS profile defined in `~/.aws/credentials` or IAM credentials (access key id and secret is fine) exported
   - This AWS profile needs to have a significant amount of privilege
   - You should have a Route53 Hosted Zone available on the account
 
@@ -74,14 +74,14 @@ Some more robust examples, including parametrized ones with outputs, are availab
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 3.70.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.2 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.58.0 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.70.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.58.0 |
 
 ### Modules
 
@@ -95,11 +95,11 @@ Some more robust examples, including parametrized ones with outputs, are availab
 
 | Name | Type |
 |------|------|
-| [aws_key_pair.ec2_key](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/key_pair) | resource |
-| [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/data-sources/ami) | data source |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/data-sources/availability_zones) | data source |
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/data-sources/region) | data source |
-| [aws_route53_zone.public](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/data-sources/route53_zone) | data source |
+| [aws_key_pair.ec2_key](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/key_pair) | resource |
+| [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/data-sources/ami) | data source |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/data-sources/availability_zones) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/data-sources/region) | data source |
+| [aws_route53_zone.public](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/data-sources/route53_zone) | data source |
 
 ### Inputs
 
@@ -137,14 +137,14 @@ Some more robust examples, including parametrized ones with outputs, are availab
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 3.70.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.2 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.58.0 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.70.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.58.0 |
 
 ### Modules
 
@@ -154,22 +154,22 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_default_route_table.public](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/default_route_table) | resource |
-| [aws_default_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/default_security_group) | resource |
-| [aws_eip.proxy](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/eip) | resource |
-| [aws_instance.bastion](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/instance) | resource |
-| [aws_instance.proxy](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/instance) | resource |
-| [aws_internet_gateway.default](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/internet_gateway) | resource |
-| [aws_route53_record.bastion_private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route53_record) | resource |
-| [aws_route53_record.proxy](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route53_record) | resource |
-| [aws_route53_record.proxy_private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route53_record) | resource |
-| [aws_route53_zone.private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route53_zone) | resource |
-| [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route_table) | resource |
-| [aws_route_table_association.private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route_table_association) | resource |
-| [aws_subnet.nat](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/subnet) | resource |
-| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/subnet) | resource |
-| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/subnet) | resource |
-| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/vpc) | resource |
+| [aws_default_route_table.public](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/default_route_table) | resource |
+| [aws_default_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/default_security_group) | resource |
+| [aws_eip.proxy](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/eip) | resource |
+| [aws_instance.bastion](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/instance) | resource |
+| [aws_instance.proxy](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/instance) | resource |
+| [aws_internet_gateway.default](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/internet_gateway) | resource |
+| [aws_route53_record.bastion_private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route53_record) | resource |
+| [aws_route53_record.proxy](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route53_record) | resource |
+| [aws_route53_record.proxy_private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route53_record) | resource |
+| [aws_route53_zone.private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route53_zone) | resource |
+| [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route_table) | resource |
+| [aws_route_table_association.private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route_table_association) | resource |
+| [aws_subnet.nat](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/subnet) | resource |
+| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/subnet) | resource |
+| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/subnet) | resource |
+| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/vpc) | resource |
 
 ### Inputs
 
@@ -208,14 +208,14 @@ No modules.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 3.70.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.2 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.58.0 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.70.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.58.0 |
 
 ### Modules
 
@@ -225,19 +225,20 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_eip.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/eip) | resource |
-| [aws_iam_access_key.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/iam_access_key) | resource |
-| [aws_iam_policy.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/iam_policy) | resource |
-| [aws_iam_user.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/iam_user) | resource |
-| [aws_iam_user_policy_attachment.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/iam_user_policy_attachment) | resource |
-| [aws_instance.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/instance) | resource |
-| [aws_route53_record.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route53_record) | resource |
-| [aws_route53_record.registry_private](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/route53_record) | resource |
-| [aws_s3_bucket.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/s3_bucket) | resource |
-| [aws_s3_bucket_public_access_block.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/s3_bucket_public_access_block) | resource |
-| [aws_security_group.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/resources/security_group) | resource |
-| [aws_subnet.registry](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/data-sources/subnet) | data source |
-| [aws_vpc.disco](https://registry.terraform.io/providers/hashicorp/aws/3.70.0/docs/data-sources/vpc) | data source |
+| [aws_eip.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/eip) | resource |
+| [aws_iam_access_key.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_access_key) | resource |
+| [aws_iam_policy.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_user.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_user) | resource |
+| [aws_iam_user_policy_attachment.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_user_policy_attachment) | resource |
+| [aws_instance.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/instance) | resource |
+| [aws_kms_key.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/kms_key) | resource |
+| [aws_route53_record.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route53_record) | resource |
+| [aws_route53_record.registry_private](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/route53_record) | resource |
+| [aws_s3_bucket.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_public_access_block.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/s3_bucket_public_access_block) | resource |
+| [aws_security_group.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/security_group) | resource |
+| [aws_subnet.registry](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/data-sources/subnet) | data source |
+| [aws_vpc.disco](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/data-sources/vpc) | data source |
 
 ### Inputs
 
@@ -270,13 +271,16 @@ No modules.
 <!-- BEGIN_INSTALLER_TF_DOCS -->
 ### Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.2 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.58.0 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.72.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.58.0 |
 
 ### Modules
 
@@ -286,10 +290,10 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_iam_access_key.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key) | resource |
-| [aws_iam_policy.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_user.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user) | resource |
-| [aws_iam_user_policy_attachment.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_policy_attachment) | resource |
+| [aws_iam_access_key.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_access_key) | resource |
+| [aws_iam_policy.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_user.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_user) | resource |
+| [aws_iam_user_policy_attachment.ocp_installer](https://registry.terraform.io/providers/hashicorp/aws/4.58.0/docs/resources/iam_user_policy_attachment) | resource |
 
 ### Inputs
 

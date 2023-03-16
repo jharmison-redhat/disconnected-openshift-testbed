@@ -1,3 +1,5 @@
+# - Flow logs are way too expensive and this environment is ephemeral
+#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
