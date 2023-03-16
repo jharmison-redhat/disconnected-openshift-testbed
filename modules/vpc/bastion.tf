@@ -11,6 +11,7 @@ resource "aws_instance" "bastion" {
   root_block_device {
     volume_type           = "gp2"
     volume_size           = var.bastion_disk_gb
+    encrypted             = true
     delete_on_termination = true
   }
 

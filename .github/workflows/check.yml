@@ -6,46 +6,50 @@ on:
 
 jobs:
 
-  tflint:
-    runs-on: ubuntu-latest
-    steps:
+# Disabled because I don't have the cycles to deal with maintaining a fork of the action:
+# https://github.com/reviewdog/action-tflint/issues/63
+# tflint is a pre-commit hook as is, that will have to do
+#  tflint:
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#    - uses: actions/checkout@v3
+#      name: Checkout code
+#
+#    - uses: hashicorp/setup-terraform@v1
+#      name: Setup Terraform
+#
+#    - name: Init terraform
+#      run: terraform init
+#
+#    - uses: reviewdog/action-tflint@master
+#      name: Run tflint
+#      with:
+#        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+#        tflint_init: true
+#        filter_mode: nofilter
+#        fail_on_error: true
 
-    - uses: actions/checkout@v2
-      name: Checkout code
-
-    - uses: hashicorp/setup-terraform@v1
-      name: Setup Terraform
-
-    - name: Init terraform
-      run: terraform init
-
-    - uses: solacelost/action-tflint@feat/add-init
-      name: Run tflint
-      with:
-        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
-        tflint_init: true
-        filter_mode: nofilter
-        fail_on_error: true
-
-  tfsec:
-    runs-on: ubuntu-latest
-    steps:
-
-    - uses: actions/checkout@v2
-      name: Checkout code
-
-    - uses: reviewdog/action-tfsec@master
-      name: Run tfsec
-      with:
-        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
-        filter_mode: nofilter
-        fail_on_error: true
+# Seems like reviewdog just doesn't maintain this stuff.... oh well
+#  tfsec:
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#    - uses: actions/checkout@v3
+#      name: Checkout code
+#
+#    - uses: reviewdog/action-tfsec@master
+#      name: Run tfsec
+#      with:
+#        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+#        filter_mode: nofilter
+#        fail_on_error: true
 
   fmt-and-validate:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout code
 
     - uses: hashicorp/setup-terraform@v1

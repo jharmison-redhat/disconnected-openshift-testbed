@@ -1,3 +1,12 @@
+terraform {
+  required_version = ">= 1.4.2"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "4.58.0"
+    }
+  }
+}
 # The permissions required for OpenShift installation are already pretty
 #  high, so this is expected to be a problem. We should still see about
 #  what we can do to scope these down a bit more later.
@@ -256,6 +265,8 @@ resource "aws_iam_policy" "ocp_installer" {
   })
 }
 
+# - This is deliberate
+#tfsec:ignore:aws-iam-no-user-attached-policies
 resource "aws_iam_user" "ocp_installer" {
   name = "${var.domain}-ocp-installer"
 }
