@@ -43,7 +43,8 @@ resource "aws_iam_policy" "ocp_installer" {
           "ec2:AuthorizeSecurityGroupEgress",
           "ec2:AttachNetworkInterface",
           "ec2:AssociateAddress",
-          "ec2:AllocateAddress"
+          "ec2:AllocateAddress",
+          "ec2:DeletePlacementGroup"
         ],
         "Resource" : "*"
       },
