@@ -30,19 +30,20 @@ jobs:
 #        filter_mode: nofilter
 #        fail_on_error: true
 
-  tfsec:
-    runs-on: ubuntu-latest
-    steps:
-
-    - uses: actions/checkout@v3
-      name: Checkout code
-
-    - uses: reviewdog/action-tfsec@master
-      name: Run tfsec
-      with:
-        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
-        filter_mode: nofilter
-        fail_on_error: true
+# Seems like reviewdog just doesn't maintain this stuff.... oh well
+#  tfsec:
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#    - uses: actions/checkout@v3
+#      name: Checkout code
+#
+#    - uses: reviewdog/action-tfsec@master
+#      name: Run tfsec
+#      with:
+#        github_token: ${{ secrets.REVIEWDOG_GITHUB_TOKEN }}
+#        filter_mode: nofilter
+#        fail_on_error: true
 
   fmt-and-validate:
     runs-on: ubuntu-latest
