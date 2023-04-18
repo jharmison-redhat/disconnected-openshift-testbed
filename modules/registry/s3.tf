@@ -21,11 +21,6 @@ resource "aws_s3_bucket" "registry" {
   }
 }
 
-resource "aws_s3_bucket_acl" "registry" {
-  bucket = aws_s3_bucket.registry.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_public_access_block" "registry" {
   bucket = aws_s3_bucket.registry.id
 
